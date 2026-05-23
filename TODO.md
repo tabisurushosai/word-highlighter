@@ -1,5 +1,5 @@
 # word-highlighter TODO (細粒度・移植構造前提)
-- [ ] T001: src/storage.ts に store アダプタ(get/set/remove, chrome.storage.local実装)を作るだけ
+- [x] T001: src/storage.ts に store アダプタ(get/set/remove, chrome.storage.local実装)を作るだけ
 - [ ] T002: src/core.ts に語リスト型と「テキストfrom登録語のマッチ位置を返す純粋関数」を実装(chrome非依存)
 - [ ] T003: popup.html/src/popup.ts に登録語の追加欄+一覧をstore経由で保存・表示(薄いUI)
 - [ ] T004: 各登録語の削除ボタン
