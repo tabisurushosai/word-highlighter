@@ -1,0 +1,13 @@
+# word-highlighter TODO (細粒度・移植構造前提)
+- [ ] T001: src/storage.ts に store アダプタ(get/set/remove, chrome.storage.local実装)を作るだけ
+- [ ] T002: src/core.ts に語リスト型と「テキストfrom登録語のマッチ位置を返す純粋関数」を実装(chrome非依存)
+- [ ] T003: popup.html/src/popup.ts に登録語の追加欄+一覧をstore経由で保存・表示(薄いUI)
+- [ ] T004: 各登録語の削除ボタン
+- [ ] T005: src/content.ts で現在ページのテキストノードを走査し、coreのマッチ関数で登録語を<mark>ハイライト
+- [ ] T006: popupからscripting.executeScriptでcontentのハイライトを実行/再適用
+- [ ] T007: 語ごとにマーカー色を割当(coreで色決定)
+- [ ] T008: _locales ja/en を chrome.i18n で全UIに適用
+- [ ] T009: Premiumゲート(trial_start_ts+Stripe URL・決済呼び出しは1箇所に隔離・購入状態はstorage)。無料は登録5語まで、Premiumで無制限+色カスタム
+- [ ] T010: npm run build を通しtsを解消
+- [ ] T011: release/word-highlighter.zip 生成(manifest/icons/_locales/dist)
+- [ ] T012: legal/PRIVACY.md と TERMS.md(外部通信なし・データ収集なし・$3買い切り7日トライアル)
