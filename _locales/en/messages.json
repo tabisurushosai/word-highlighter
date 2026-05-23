@@ -3,5 +3,9 @@
   "extDesc": { "message": "Automatically highlights your saved words on any page." },
   "appName": { "message": "Word Highlighter" },
   "addPlaceholder": { "message": "Add keyword..." },
-  "addButton": { "message": "Add" }
+  "addButton": { "message": "Add" },
+  "premiumUpgrade": { "message": "Upgrade to Premium" },
+  "premiumActive": { "message": "Premium Active" },
+  "limitReached": { "message": "Limit reached (5 words for free plan)" },
+  "trialPeriod": { "message": "Trial: $DAYS$ days left", "placeholders": { "DAYS": { "content": "$1" } } }
 }

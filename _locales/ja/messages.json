@@ -3,5 +3,9 @@
   "extDesc": { "message": "ページの中から、登録した言葉を自動で見つけてマーカー。探し読み・確認作業に。" },
   "appName": { "message": "みつけるマーカー" },
   "addPlaceholder": { "message": "キーワードを追加..." },
-  "addButton": { "message": "追加" }
+  "addButton": { "message": "追加" },
+  "premiumUpgrade": { "message": "プレミアムにアップグレード" },
+  "premiumActive": { "message": "プレミアム有効" },
+  "limitReached": { "message": "登録制限です（無料版は5語まで）" },
+  "trialPeriod": { "message": "トライアル終了まであと $DAYS$ 日", "placeholders": { "DAYS": { "content": "$1" } } }
 }
