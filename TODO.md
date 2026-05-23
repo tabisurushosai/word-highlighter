@@ -10,4 +10,4 @@
 - [x] T009: Premiumゲート(trial_start_ts+Stripe URL・決済呼び出しは1箇所に隔離・購入状態はstorage)。無料は登録5語まで、Premiumで無制限+色カスタム
 - [x] T010: npm run build を通しtsを解消
 - [x] T011: release/word-highlighter.zip 生成(manifest/icons/_locales/dist)
-- [ ] T012: legal/PRIVACY.md と TERMS.md(外部通信なし・データ収集なし・$3買い切り7日トライアル)
+- [x] T012: legal/PRIVACY.md と TERMS.md(外部通信なし・データ収集なし・$3買い切り7日トライアル)
