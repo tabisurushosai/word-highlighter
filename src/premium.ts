@@ -44,11 +44,8 @@ export function getRemainingTrialDays(status: PremiumStatus): number {
 }
 
 export async function upgradeToPremium(): Promise<void> {
-  // In a real app, this might open a Stripe URL
-  // For this task, we isolate the logic here.
   window.open(STRIPE_CHECKOUT_URL, '_blank');
-  
+
   // Note: We don't set isPremium to true here because that should happen 
   // after successful payment via webhook or polling.
-  // But for the purpose of T009, we've isolated the calling point.
 }
