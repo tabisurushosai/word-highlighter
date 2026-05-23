@@ -1,6 +1,6 @@
 {
   "extName": { "message": "Word Highlighter" },
-  "extDesc": { "message": "Automatically highlights your saved words on any page." },
+  "extDesc": { "message": "Automatically highlights your saved keywords on the current page." },
   "appName": { "message": "Word Highlighter" },
   "wordInputLabel": { "message": "Keyword to add" },
   "wordListLabel": { "message": "Saved keywords" },
@@ -8,7 +8,7 @@
   "addButton": { "message": "Add" },
   "loadingWords": { "message": "Loading saved keywords..." },
   "noWords": { "message": "No keywords yet. Add words you want to find on the page." },
-  "wordCount": { "message": "$COUNT$ keywords saved", "placeholders": { "COUNT": { "content": "$1" } } },
+  "wordCount": { "message": "Saved keywords: $COUNT$", "placeholders": { "COUNT": { "content": "$1" } } },
   "wordSaved": { "message": "Keyword added." },
   "wordDeleted": { "message": "Keyword deleted." },
   "colorUpdated": { "message": "Marker color updated." },
@@ -17,7 +17,7 @@
   "changeWordColor": { "message": "Change marker color for $WORD$", "placeholders": { "WORD": { "content": "$1" } } },
   "colorSample": { "message": "Marker color" },
   "premiumUpgrade": { "message": "Upgrade to Premium" },
-  "premiumActive": { "message": "Premium Active" },
-  "limitReached": { "message": "Limit reached (5 words for free plan)" },
-  "trialPeriod": { "message": "Trial: $DAYS$ days left", "placeholders": { "DAYS": { "content": "$1" } } }
+  "premiumActive": { "message": "Premium is active" },
+  "limitReached": { "message": "Free plan supports up to $LIMIT$ keywords.", "placeholders": { "LIMIT": { "content": "$1" } } },
+  "trialPeriod": { "message": "Trial days remaining: $DAYS$", "placeholders": { "DAYS": { "content": "$1" } } }
 }

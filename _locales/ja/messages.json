@@ -1,6 +1,6 @@
 {
   "extName": { "message": "みつけるマーカー" },
-  "extDesc": { "message": "ページの中から、登録した言葉を自動で見つけてマーカー。探し読み・確認作業に。" },
+  "extDesc": { "message": "ページ内の登録キーワードを自動で見つけてハイライトします。探し読みや確認作業に便利です。" },
   "appName": { "message": "みつけるマーカー" },
   "wordInputLabel": { "message": "追加するキーワード" },
   "wordListLabel": { "message": "登録キーワード" },
@@ -8,7 +8,7 @@
   "addButton": { "message": "追加" },
   "loadingWords": { "message": "登録語を読み込んでいます..." },
   "noWords": { "message": "登録語はまだありません。ページ内で見つけたい言葉を追加してください。" },
-  "wordCount": { "message": "$COUNT$ 語を登録中", "placeholders": { "COUNT": { "content": "$1" } } },
+  "wordCount": { "message": "登録中のキーワード: $COUNT$語", "placeholders": { "COUNT": { "content": "$1" } } },
   "wordSaved": { "message": "キーワードを追加しました。" },
   "wordDeleted": { "message": "キーワードを削除しました。" },
   "colorUpdated": { "message": "マーカー色を更新しました。" },
@@ -17,7 +17,7 @@
   "changeWordColor": { "message": "$WORD$ のマーカー色を変更", "placeholders": { "WORD": { "content": "$1" } } },
   "colorSample": { "message": "マーカー色" },
   "premiumUpgrade": { "message": "プレミアムにアップグレード" },
-  "premiumActive": { "message": "プレミアム有効" },
-  "limitReached": { "message": "登録制限です（無料版は5語まで）" },
-  "trialPeriod": { "message": "トライアル終了まであと $DAYS$ 日", "placeholders": { "DAYS": { "content": "$1" } } }
+  "premiumActive": { "message": "プレミアムが有効です" },
+  "limitReached": { "message": "無料版では$LIMIT$語まで登録できます。", "placeholders": { "LIMIT": { "content": "$1" } } },
+  "trialPeriod": { "message": "トライアル残り: $DAYS$日", "placeholders": { "DAYS": { "content": "$1" } } }
 }

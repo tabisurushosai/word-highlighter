@@ -13,8 +13,14 @@ const statusMessage = document.getElementById('statusMessage') as HTMLDivElement
 const premiumStatusSpan = document.getElementById('premiumStatus') as HTMLSpanElement;
 const upgradeButton = document.getElementById('upgradeButton') as HTMLButtonElement;
 
+const numberFormatter = new Intl.NumberFormat(chrome.i18n.getUILanguage());
+
 function getMessage(key: string, substitutions?: string | string[]): string {
   return chrome.i18n.getMessage(key, substitutions);
+}
+
+function formatNumber(value: number): string {
+  return numberFormatter.format(value);
 }
 
 function setStatusMessage(key: string, substitutions?: string | string[]) {
@@ -55,12 +61,12 @@ async function updatePremiumUI() {
       upgradeButton.style.display = 'none';
     } else {
       const days = getRemainingTrialDays(status);
-      premiumStatusSpan.textContent = getMessage('trialPeriod', [days.toString()]);
+      premiumStatusSpan.textContent = getMessage('trialPeriod', [formatNumber(days)]);
       upgradeButton.style.display = 'inline-flex';
       upgradeButton.textContent = getMessage('premiumUpgrade');
     }
   } else {
-    premiumStatusSpan.textContent = getMessage('limitReached');
+    premiumStatusSpan.textContent = getMessage('limitReached', [formatNumber(FREE_WORD_LIMIT)]);
     upgradeButton.style.display = 'inline-flex';
     upgradeButton.textContent = getMessage('premiumUpgrade');
   }
@@ -158,7 +164,7 @@ async function renderList(feedback?: { key: string; substitutions?: string | str
   if (!isPremium && words.length >= FREE_WORD_LIMIT) {
     wordInput.disabled = true;
     addButton.disabled = true;
-    wordInput.placeholder = getMessage('limitReached');
+    wordInput.placeholder = getMessage('limitReached', [formatNumber(FREE_WORD_LIMIT)]);
   } else {
     wordInput.disabled = false;
     addButton.disabled = false;
@@ -170,7 +176,7 @@ async function renderList(feedback?: { key: string; substitutions?: string | str
   } else if (words.length === 0) {
     setStatusMessage('noWords');
   } else {
-    setStatusMessage('wordCount', [words.length.toString()]);
+    setStatusMessage('wordCount', [formatNumber(words.length)]);
   }
   wordListContainer.setAttribute('aria-busy', 'false');
 
