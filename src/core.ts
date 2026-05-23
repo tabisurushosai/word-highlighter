@@ -12,6 +12,26 @@ export interface Match {
   word: WordItem;
 }
 
+const PALETTE = [
+  '#ffff00', // Yellow
+  '#00ff00', // Lime
+  '#00ffff', // Cyan
+  '#ff00ff', // Magenta
+  '#ffc0cb', // Pink
+  '#ffa500', // Orange
+  '#7fff00', // Chartreuse
+  '#40e0d0', // Turquoise
+  '#dda0dd', // Plum
+  '#f0e68c', // Khaki
+];
+
+/**
+ * Returns a color from the predefined palette based on the index.
+ */
+export function getNextColor(existingCount: number): string {
+  return PALETTE[existingCount % PALETTE.length];
+}
+
 /**
  * Finds all occurrences of the registered words in the given text.
  * Returns non-overlapping matches, prioritizing longer words and earlier appearances.

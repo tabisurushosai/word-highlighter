@@ -1,5 +1,5 @@
 import { storage } from './storage';
-import { WordList, WordItem } from './core';
+import { WordList, WordItem, getNextColor } from './core';
 
 const STORAGE_KEY = 'word_list';
 
@@ -33,7 +33,17 @@ async function renderList() {
     div.style.background = '#f0f0f0';
     div.style.borderRadius = '4px';
     div.style.fontSize = '14px';
+    div.style.marginBottom = '4px';
     
+    const colorBadge = document.createElement('div');
+    colorBadge.style.width = '12px';
+    colorBadge.style.height = '12px';
+    colorBadge.style.borderRadius = '2px';
+    colorBadge.style.backgroundColor = word.color;
+    colorBadge.style.marginRight = '8px';
+    colorBadge.style.border = '1px solid #ccc';
+    div.appendChild(colorBadge);
+
     const textSpan = document.createElement('span');
     textSpan.style.flex = '1';
     textSpan.textContent = word.text;
@@ -68,7 +78,7 @@ addButton.addEventListener('click', async () => {
   const newItem: WordItem = {
     id: crypto.randomUUID(),
     text,
-    color: '#ffeb3b', // Default yellow
+    color: getNextColor(words.length),
   };
 
   await storage.set(STORAGE_KEY, [...words, newItem]);
