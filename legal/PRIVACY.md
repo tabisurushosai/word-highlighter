@@ -5,11 +5,11 @@ This Privacy Policy describes how Word Highlighter ("we", "our", or "us") handle
 ## Data Collection and Usage
 Word Highlighter is designed with privacy as a core principle.
 - **No Data Collection:** We do not collect, store, or transmit any personal information, browsing history, or any other data from your device.
-- **No External Communication:** The extension operates entirely locally on your machine. It does not communicate with any external servers or services.
+- **Local Operation:** Highlighting and word-list management operate locally on your machine. If you choose to upgrade, the extension opens Stripe Checkout in a new browser tab so payment can be handled by Stripe.
 - **Local Storage:** Any settings or word lists you create are stored locally in your browser's storage and never leave your device.
 
 ## Third-Party Services
-Since the extension does not communicate with any external servers, no data is shared with third-party services.
+Payment upgrades are handled by Stripe Checkout when you click the upgrade button. Word lists and highlight settings are not sent to Stripe by the extension.
 
 ## Changes to This Policy
 We may update our Privacy Policy from time to time. Any changes will be posted on this page.
