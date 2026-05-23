@@ -5,8 +5,10 @@ import { getPremiumStatus, isUserPremium, getRemainingTrialDays, upgradeToPremiu
 const STORAGE_KEY = 'word_list';
 
 const wordInput = document.getElementById('wordInput') as HTMLInputElement;
+const wordInputLabel = document.getElementById('wordInputLabel') as HTMLLabelElement;
+const addWordForm = document.getElementById('addWordForm') as HTMLFormElement;
 const addButton = document.getElementById('addButton') as HTMLButtonElement;
-const wordListContainer = document.getElementById('wordList') as HTMLDivElement;
+const wordListContainer = document.getElementById('wordList') as HTMLUListElement;
 const statusMessage = document.getElementById('statusMessage') as HTMLDivElement;
 const premiumStatusSpan = document.getElementById('premiumStatus') as HTMLSpanElement;
 const upgradeButton = document.getElementById('upgradeButton') as HTMLButtonElement;
@@ -24,12 +26,20 @@ function applyI18n() {
   const appName = document.getElementById('appName');
   if (appName) appName.textContent = getMessage('appName');
 
+  if (wordInputLabel) {
+    wordInputLabel.textContent = getMessage('wordInputLabel');
+  }
+
   if (wordInput) {
     wordInput.placeholder = getMessage('addPlaceholder');
   }
 
   if (addButton) {
     addButton.textContent = getMessage('addButton');
+  }
+
+  if (wordListContainer) {
+    wordListContainer.setAttribute('aria-label', getMessage('wordListLabel'));
   }
 }
 
@@ -87,14 +97,14 @@ async function renderList(feedback?: { key: string; substitutions?: string | str
   wordListContainer.innerHTML = '';
 
   if (words.length === 0) {
-    const emptyState = document.createElement('div');
+    const emptyState = document.createElement('li');
     emptyState.className = 'empty-state';
     emptyState.textContent = getMessage('noWords');
     wordListContainer.appendChild(emptyState);
   }
 
   words.forEach(word => {
-    const div = document.createElement('div');
+    const div = document.createElement('li');
     div.className = 'word-item';
 
     if (isPremium) {
@@ -102,7 +112,8 @@ async function renderList(feedback?: { key: string; substitutions?: string | str
       colorInput.type = 'color';
       colorInput.value = word.color;
       colorInput.className = 'color-input';
-      colorInput.title = getMessage('changeColor');
+      colorInput.title = getMessage('changeWordColor', [word.text]);
+      colorInput.setAttribute('aria-label', getMessage('changeWordColor', [word.text]));
       colorInput.onchange = async () => {
         const currentWords = (await storage.get<WordList>(STORAGE_KEY)) || [];
         const updated = currentWords.map(w => w.id === word.id ? { ...w, color: colorInput.value } : w);
@@ -116,6 +127,8 @@ async function renderList(feedback?: { key: string; substitutions?: string | str
       colorBadge.className = 'color-badge';
       colorBadge.style.backgroundColor = word.color;
       colorBadge.title = getMessage('colorSample');
+      colorBadge.setAttribute('role', 'img');
+      colorBadge.setAttribute('aria-label', getMessage('colorSample'));
       div.appendChild(colorBadge);
     }
 
@@ -164,7 +177,8 @@ async function renderList(feedback?: { key: string; substitutions?: string | str
   await updatePremiumUI();
 }
 
-addButton.addEventListener('click', async () => {
+addWordForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
   const text = wordInput.value.trim();
   if (!text) return;
 

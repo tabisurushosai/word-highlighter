@@ -5,12 +5,12 @@
     --surface: #f8fafc;
     --surface-strong: #eef2f7;
     --text: #111827;
-    --muted: #6b7280;
+    --muted: #4b5563;
     --border: #d7dde6;
     --primary: #1d4ed8;
     --primary-hover: #1e40af;
     --disabled: #9ca3af;
-    --focus: #93c5fd;
+    --focus: #2563eb;
   }
 
   * {
@@ -45,11 +45,23 @@
     margin-bottom: 10px;
   }
 
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
   .word-input {
     flex: 1;
     min-width: 0;
-    height: 38px;
-    padding: 8px 10px;
+    min-height: 44px;
+    padding: 10px 12px;
     border: 1px solid var(--border);
     border-radius: 10px;
     color: var(--text);
@@ -61,7 +73,7 @@
     color: var(--muted);
   }
 
-  .word-input:focus,
+  .word-input:focus-visible,
   button:focus-visible,
   .color-input:focus-visible {
     outline: 3px solid var(--focus);
@@ -69,7 +81,10 @@
   }
 
   button {
-    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
     border: 1px solid transparent;
     border-radius: 10px;
     font: inherit;
@@ -84,7 +99,7 @@
   }
 
   .add-button {
-    padding: 0 14px;
+    padding: 0 16px;
     color: #fff;
     background: var(--primary);
   }
@@ -104,6 +119,9 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
   }
 
   .word-item,
@@ -117,8 +135,8 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    min-height: 42px;
-    padding: 8px 10px;
+    min-height: 52px;
+    padding: 8px 12px;
   }
 
   .word-text {
@@ -129,9 +147,10 @@
   }
 
   .color-input {
-    width: 24px;
-    height: 24px;
-    flex: 0 0 24px;
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+    flex: 0 0 44px;
     padding: 0;
     border: 1px solid var(--border);
     border-radius: 6px;
@@ -148,8 +167,8 @@
   }
 
   .delete-button {
-    width: 32px;
-    min-height: 32px;
+    width: 44px;
+    min-height: 44px;
     padding: 0;
     color: var(--muted);
     background: transparent;
@@ -187,8 +206,8 @@
 
   .upgrade-button {
     display: none;
-    min-height: 32px;
-    padding: 0 12px;
+    min-height: 44px;
+    padding: 0 16px;
     color: var(--primary);
     background: #eff6ff;
     border-color: #bfdbfe;
@@ -198,13 +217,14 @@
   <header class="header">
     <h1 id="appName" class="title">みつけるマーカー</h1>
   </header>
-  <main id="app">
-    <div class="input-row">
-      <input type="text" id="wordInput" class="word-input" placeholder="キーワードを追加...">
-      <button id="addButton" class="add-button">追加</button>
-    </div>
+  <main id="app" aria-labelledby="appName">
+    <form id="addWordForm" class="input-row">
+      <label id="wordInputLabel" class="visually-hidden" for="wordInput">追加するキーワード</label>
+      <input type="text" id="wordInput" class="word-input" placeholder="キーワードを追加..." aria-describedby="statusMessage" aria-controls="wordList">
+      <button id="addButton" class="add-button" type="submit">追加</button>
+    </form>
     <div id="statusMessage" class="status-message" role="status" aria-live="polite"></div>
-    <div id="wordList" class="word-list" aria-busy="true"></div>
+    <ul id="wordList" class="word-list" aria-busy="true" aria-live="polite" aria-label="登録キーワード"></ul>
   </main>
   <hr class="divider">
   <section id="premiumArea" class="premium-area" aria-live="polite">
