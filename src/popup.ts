@@ -19,7 +19,28 @@ async function renderList() {
     div.style.background = '#f0f0f0';
     div.style.borderRadius = '4px';
     div.style.fontSize = '14px';
-    div.textContent = word.text;
+    
+    const textSpan = document.createElement('span');
+    textSpan.style.flex = '1';
+    textSpan.textContent = word.text;
+    div.appendChild(textSpan);
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = '×';
+    deleteBtn.style.border = 'none';
+    deleteBtn.style.background = 'none';
+    deleteBtn.style.cursor = 'pointer';
+    deleteBtn.style.padding = '0 4px';
+    deleteBtn.style.fontSize = '16px';
+    deleteBtn.style.color = '#999';
+    deleteBtn.onclick = async () => {
+      const currentWords = (await storage.get<WordList>(STORAGE_KEY)) || [];
+      const filtered = currentWords.filter(w => w.id !== word.id);
+      await storage.set(STORAGE_KEY, filtered);
+      await renderList();
+    };
+    div.appendChild(deleteBtn);
+
     wordListContainer.appendChild(div);
   });
 }
