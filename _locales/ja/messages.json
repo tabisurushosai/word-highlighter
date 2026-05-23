@@ -1,1 +1,7 @@
-{ "extName":{"message":"みつけるマーカー"},"extDesc":{"message":"ページの中から、登録した言葉を自動で見つけてマーカー。探し読み・確認作業に。"} }
+{
+  "extName": { "message": "みつけるマーカー" },
+  "extDesc": { "message": "ページの中から、登録した言葉を自動で見つけてマーカー。探し読み・確認作業に。" },
+  "appName": { "message": "みつけるマーカー" },
+  "addPlaceholder": { "message": "キーワードを追加..." },
+  "addButton": { "message": "追加" }
+}

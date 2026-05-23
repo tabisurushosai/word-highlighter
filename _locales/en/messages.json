@@ -1,1 +1,7 @@
-{ "extName":{"message":"Word Highlighter"},"extDesc":{"message":"Automatically highlights your saved words on any page."} }
+{
+  "extName": { "message": "Word Highlighter" },
+  "extDesc": { "message": "Automatically highlights your saved words on any page." },
+  "appName": { "message": "Word Highlighter" },
+  "addPlaceholder": { "message": "Add keyword..." },
+  "addButton": { "message": "Add" }
+}

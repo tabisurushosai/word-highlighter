@@ -7,6 +7,22 @@ const wordInput = document.getElementById('wordInput') as HTMLInputElement;
 const addButton = document.getElementById('addButton') as HTMLButtonElement;
 const wordListContainer = document.getElementById('wordList') as HTMLDivElement;
 
+// Apply internationalization
+function applyI18n() {
+  const appName = document.getElementById('appName');
+  if (appName) appName.textContent = chrome.i18n.getMessage('appName');
+
+  if (wordInput) {
+    wordInput.placeholder = chrome.i18n.getMessage('addPlaceholder');
+  }
+
+  if (addButton) {
+    addButton.textContent = chrome.i18n.getMessage('addButton');
+  }
+}
+
+applyI18n();
+
 async function triggerHighlight() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   if (!tab?.id || !tab.url?.startsWith('http')) return;
