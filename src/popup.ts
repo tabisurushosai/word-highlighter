@@ -7,6 +7,20 @@ const wordInput = document.getElementById('wordInput') as HTMLInputElement;
 const addButton = document.getElementById('addButton') as HTMLButtonElement;
 const wordListContainer = document.getElementById('wordList') as HTMLDivElement;
 
+async function triggerHighlight() {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (!tab?.id || !tab.url?.startsWith('http')) return;
+
+  try {
+    await chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      files: ['content.js']
+    });
+  } catch (err) {
+    console.error('Failed to execute script:', err);
+  }
+}
+
 async function renderList() {
   const words = (await storage.get<WordList>(STORAGE_KEY)) || [];
   wordListContainer.innerHTML = '';
@@ -38,6 +52,7 @@ async function renderList() {
       const filtered = currentWords.filter(w => w.id !== word.id);
       await storage.set(STORAGE_KEY, filtered);
       await renderList();
+      await triggerHighlight();
     };
     div.appendChild(deleteBtn);
 
@@ -59,6 +74,7 @@ addButton.addEventListener('click', async () => {
   await storage.set(STORAGE_KEY, [...words, newItem]);
   wordInput.value = '';
   await renderList();
+  await triggerHighlight();
 });
 
 // Initial render

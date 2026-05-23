@@ -4,7 +4,7 @@
 - [x] T003: popup.html/src/popup.ts に登録語の追加欄+一覧をstore経由で保存・表示(薄いUI)
 - [x] T004: 各登録語の削除ボタン
 - [x] T005: src/content.ts で現在ページのテキストノードを走査し、coreのマッチ関数で登録語を<mark>ハイライト
-- [ ] T006: popupからscripting.executeScriptでcontentのハイライトを実行/再適用
+- [x] T006: popupからscripting.executeScriptでcontentのハイライトを実行/再適用
 - [ ] T007: 語ごとにマーカー色を割当(coreで色決定)
 - [ ] T008: _locales ja/en を chrome.i18n で全UIに適用
 - [ ] T009: Premiumゲート(trial_start_ts+Stripe URL・決済呼び出しは1箇所に隔離・購入状態はstorage)。無料は登録5語まで、Premiumで無制限+色カスタム

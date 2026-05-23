@@ -4,6 +4,17 @@ import { findMatches, WordList } from './core';
 const STORAGE_KEY = 'word_list';
 
 async function highlightAll() {
+  // Clear existing highlights first
+  const existingMarks = document.querySelectorAll('mark[data-word-highlighter="true"]');
+  existingMarks.forEach(mark => {
+    const parent = mark.parentNode;
+    if (parent) {
+      const text = mark.textContent || '';
+      parent.replaceChild(document.createTextNode(text), mark);
+      parent.normalize();
+    }
+  });
+
   const words = (await storage.get<WordList>(STORAGE_KEY)) || [];
   if (words.length === 0 || !document.body) return;
 
