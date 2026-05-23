@@ -7,20 +7,29 @@ const STORAGE_KEY = 'word_list';
 const wordInput = document.getElementById('wordInput') as HTMLInputElement;
 const addButton = document.getElementById('addButton') as HTMLButtonElement;
 const wordListContainer = document.getElementById('wordList') as HTMLDivElement;
+const statusMessage = document.getElementById('statusMessage') as HTMLDivElement;
 const premiumStatusSpan = document.getElementById('premiumStatus') as HTMLSpanElement;
 const upgradeButton = document.getElementById('upgradeButton') as HTMLButtonElement;
+
+function getMessage(key: string, substitutions?: string | string[]): string {
+  return chrome.i18n.getMessage(key, substitutions);
+}
+
+function setStatusMessage(key: string, substitutions?: string | string[]) {
+  statusMessage.textContent = getMessage(key, substitutions);
+}
 
 // Apply internationalization
 function applyI18n() {
   const appName = document.getElementById('appName');
-  if (appName) appName.textContent = chrome.i18n.getMessage('appName');
+  if (appName) appName.textContent = getMessage('appName');
 
   if (wordInput) {
-    wordInput.placeholder = chrome.i18n.getMessage('addPlaceholder');
+    wordInput.placeholder = getMessage('addPlaceholder');
   }
 
   if (addButton) {
-    addButton.textContent = chrome.i18n.getMessage('addButton');
+    addButton.textContent = getMessage('addButton');
   }
 }
 
@@ -32,18 +41,18 @@ async function updatePremiumUI() {
 
   if (isPremium) {
     if (status.isPremium) {
-      premiumStatusSpan.textContent = chrome.i18n.getMessage('premiumActive');
+      premiumStatusSpan.textContent = getMessage('premiumActive');
       upgradeButton.style.display = 'none';
     } else {
       const days = getRemainingTrialDays(status);
-      premiumStatusSpan.textContent = chrome.i18n.getMessage('trialPeriod', [days.toString()]);
-      upgradeButton.style.display = 'inline-block';
-      upgradeButton.textContent = chrome.i18n.getMessage('premiumUpgrade');
+      premiumStatusSpan.textContent = getMessage('trialPeriod', [days.toString()]);
+      upgradeButton.style.display = 'inline-flex';
+      upgradeButton.textContent = getMessage('premiumUpgrade');
     }
   } else {
-    premiumStatusSpan.textContent = chrome.i18n.getMessage('limitReached');
-    upgradeButton.style.display = 'inline-block';
-    upgradeButton.textContent = chrome.i18n.getMessage('premiumUpgrade');
+    premiumStatusSpan.textContent = getMessage('limitReached');
+    upgradeButton.style.display = 'inline-flex';
+    upgradeButton.textContent = getMessage('premiumUpgrade');
   }
 }
 
@@ -65,69 +74,66 @@ async function triggerHighlight() {
   }
 }
 
-async function renderList() {
+async function renderList(feedback?: { key: string; substitutions?: string | string[] }) {
+  wordListContainer.setAttribute('aria-busy', 'true');
+  if (!feedback) {
+    setStatusMessage('loadingWords');
+  }
+
   const words = (await storage.get<WordList>(STORAGE_KEY)) || [];
   const status = await getPremiumStatus();
   const isPremium = isUserPremium(status);
 
   wordListContainer.innerHTML = '';
-  
+
+  if (words.length === 0) {
+    const emptyState = document.createElement('div');
+    emptyState.className = 'empty-state';
+    emptyState.textContent = getMessage('noWords');
+    wordListContainer.appendChild(emptyState);
+  }
+
   words.forEach(word => {
     const div = document.createElement('div');
-    div.style.display = 'flex';
-    div.style.alignItems = 'center';
-    div.style.padding = '4px 8px';
-    div.style.background = '#f0f0f0';
-    div.style.borderRadius = '4px';
-    div.style.fontSize = '14px';
-    div.style.marginBottom = '4px';
-    
+    div.className = 'word-item';
+
     if (isPremium) {
       const colorInput = document.createElement('input');
       colorInput.type = 'color';
       colorInput.value = word.color;
-      colorInput.style.width = '20px';
-      colorInput.style.height = '20px';
-      colorInput.style.border = 'none';
-      colorInput.style.padding = '0';
-      colorInput.style.marginRight = '8px';
-      colorInput.style.cursor = 'pointer';
+      colorInput.className = 'color-input';
+      colorInput.title = getMessage('changeColor');
       colorInput.onchange = async () => {
         const currentWords = (await storage.get<WordList>(STORAGE_KEY)) || [];
         const updated = currentWords.map(w => w.id === word.id ? { ...w, color: colorInput.value } : w);
         await storage.set(STORAGE_KEY, updated);
+        setStatusMessage('colorUpdated');
         await triggerHighlight();
       };
       div.appendChild(colorInput);
     } else {
       const colorBadge = document.createElement('div');
-      colorBadge.style.width = '12px';
-      colorBadge.style.height = '12px';
-      colorBadge.style.borderRadius = '2px';
+      colorBadge.className = 'color-badge';
       colorBadge.style.backgroundColor = word.color;
-      colorBadge.style.marginRight = '8px';
-      colorBadge.style.border = '1px solid #ccc';
+      colorBadge.title = getMessage('colorSample');
       div.appendChild(colorBadge);
     }
 
     const textSpan = document.createElement('span');
-    textSpan.style.flex = '1';
+    textSpan.className = 'word-text';
     textSpan.textContent = word.text;
     div.appendChild(textSpan);
 
     const deleteBtn = document.createElement('button');
     deleteBtn.textContent = '×';
-    deleteBtn.style.border = 'none';
-    deleteBtn.style.background = 'none';
-    deleteBtn.style.cursor = 'pointer';
-    deleteBtn.style.padding = '0 4px';
-    deleteBtn.style.fontSize = '16px';
-    deleteBtn.style.color = '#999';
+    deleteBtn.className = 'delete-button';
+    deleteBtn.type = 'button';
+    deleteBtn.setAttribute('aria-label', getMessage('deleteWord', [word.text]));
     deleteBtn.onclick = async () => {
       const currentWords = (await storage.get<WordList>(STORAGE_KEY)) || [];
       const filtered = currentWords.filter(w => w.id !== word.id);
       await storage.set(STORAGE_KEY, filtered);
-      await renderList();
+      await renderList({ key: 'wordDeleted' });
       await triggerHighlight();
     };
     div.appendChild(deleteBtn);
@@ -139,12 +145,21 @@ async function renderList() {
   if (!isPremium && words.length >= FREE_WORD_LIMIT) {
     wordInput.disabled = true;
     addButton.disabled = true;
-    wordInput.placeholder = chrome.i18n.getMessage('limitReached');
+    wordInput.placeholder = getMessage('limitReached');
   } else {
     wordInput.disabled = false;
     addButton.disabled = false;
-    wordInput.placeholder = chrome.i18n.getMessage('addPlaceholder');
+    wordInput.placeholder = getMessage('addPlaceholder');
   }
+
+  if (feedback) {
+    setStatusMessage(feedback.key, feedback.substitutions);
+  } else if (words.length === 0) {
+    setStatusMessage('noWords');
+  } else {
+    setStatusMessage('wordCount', [words.length.toString()]);
+  }
+  wordListContainer.setAttribute('aria-busy', 'false');
 
   await updatePremiumUI();
 }
@@ -167,7 +182,7 @@ addButton.addEventListener('click', async () => {
 
   await storage.set(STORAGE_KEY, [...words, newItem]);
   wordInput.value = '';
-  await renderList();
+  await renderList({ key: 'wordSaved' });
   await triggerHighlight();
 });
 

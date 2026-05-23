@@ -1,16 +1,215 @@
-<!doctype html><html><head><meta charset="utf-8"></head><body style="width:320px;font-family:system-ui;padding:12px">
-  <h3 id="appName">みつけるマーカー</h3>
-  <div id="app">
-    <div style="display:flex; gap:8px; margin-bottom:12px">
-      <input type="text" id="wordInput" style="flex:1" placeholder="キーワードを追加...">
-      <button id="addButton">追加</button>
+<!doctype html><html><head><meta charset="utf-8"><style>
+  :root {
+    color-scheme: light;
+    --bg: #ffffff;
+    --surface: #f8fafc;
+    --surface-strong: #eef2f7;
+    --text: #111827;
+    --muted: #6b7280;
+    --border: #d7dde6;
+    --primary: #1d4ed8;
+    --primary-hover: #1e40af;
+    --disabled: #9ca3af;
+    --focus: #93c5fd;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    width: 340px;
+    margin: 0;
+    padding: 16px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
+  .header {
+    margin-bottom: 14px;
+  }
+
+  .title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: .01em;
+  }
+
+  .input-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .word-input {
+    flex: 1;
+    min-width: 0;
+    height: 38px;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    background: #fff;
+    font: inherit;
+  }
+
+  .word-input::placeholder {
+    color: var(--muted);
+  }
+
+  .word-input:focus,
+  button:focus-visible,
+  .color-input:focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  button {
+    min-height: 38px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  button:disabled,
+  .word-input:disabled {
+    cursor: not-allowed;
+    opacity: .68;
+  }
+
+  .add-button {
+    padding: 0 14px;
+    color: #fff;
+    background: var(--primary);
+  }
+
+  .add-button:hover:not(:disabled) {
+    background: var(--primary-hover);
+  }
+
+  .status-message {
+    min-height: 20px;
+    margin-bottom: 10px;
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .word-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .word-item,
+  .empty-state {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+  }
+
+  .word-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 42px;
+    padding: 8px 10px;
+  }
+
+  .word-text {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    font-weight: 600;
+  }
+
+  .color-input {
+    width: 24px;
+    height: 24px;
+    flex: 0 0 24px;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #fff;
+    cursor: pointer;
+  }
+
+  .color-badge {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 16px;
+    border: 1px solid rgba(17, 24, 39, .24);
+    border-radius: 5px;
+  }
+
+  .delete-button {
+    width: 32px;
+    min-height: 32px;
+    padding: 0;
+    color: var(--muted);
+    background: transparent;
+    border-color: transparent;
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  .delete-button:hover {
+    color: var(--text);
+    background: var(--surface-strong);
+  }
+
+  .empty-state {
+    padding: 18px 14px;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 16px 0 12px;
+  }
+
+  .premium-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+  }
+
+  .upgrade-button {
+    display: none;
+    min-height: 32px;
+    padding: 0 12px;
+    color: var(--primary);
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    font-size: 12px;
+  }
+</style></head><body>
+  <header class="header">
+    <h1 id="appName" class="title">みつけるマーカー</h1>
+  </header>
+  <main id="app">
+    <div class="input-row">
+      <input type="text" id="wordInput" class="word-input" placeholder="キーワードを追加...">
+      <button id="addButton" class="add-button">追加</button>
     </div>
-    <div id="wordList" style="display:flex; flex-direction:column; gap:4px"></div>
-  </div>
-  <hr style="border:none; border-top:1px solid #eee; margin:16px 0">
-  <div id="premiumArea" style="font-size:12px; color:#666; text-align:center">
+    <div id="statusMessage" class="status-message" role="status" aria-live="polite"></div>
+    <div id="wordList" class="word-list" aria-busy="true"></div>
+  </main>
+  <hr class="divider">
+  <section id="premiumArea" class="premium-area" aria-live="polite">
     <span id="premiumStatus"></span>
-    <button id="upgradeButton" style="display:none; margin-top:4px; font-size:12px; cursor:pointer"></button>
-  </div>
+    <button id="upgradeButton" class="upgrade-button"></button>
+  </section>
   <script type="module" src="/src/popup.ts"></script>
 </body></html>
