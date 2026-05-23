@@ -3,7 +3,7 @@
 - [x] T002: src/core.ts に語リスト型と「テキストfrom登録語のマッチ位置を返す純粋関数」を実装(chrome非依存)
 - [x] T003: popup.html/src/popup.ts に登録語の追加欄+一覧をstore経由で保存・表示(薄いUI)
 - [x] T004: 各登録語の削除ボタン
-- [ ] T005: src/content.ts で現在ページのテキストノードを走査し、coreのマッチ関数で登録語を<mark>ハイライト
+- [x] T005: src/content.ts で現在ページのテキストノードを走査し、coreのマッチ関数で登録語を<mark>ハイライト
 - [ ] T006: popupからscripting.executeScriptでcontentのハイライトを実行/再適用
 - [ ] T007: 語ごとにマーカー色を割当(coreで色決定)
 - [ ] T008: _locales ja/en を chrome.i18n で全UIに適用
