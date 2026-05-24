@@ -1,7 +1,5 @@
-import { storage } from './storage';
-import { findMatches, WordList } from './core';
-
-const STORAGE_KEY = 'word_list';
+import { WORD_LIST_STORAGE_KEY, storage } from './storage';
+import { findMatches, type WordList } from './core';
 
 async function highlightAll() {
   // Clear existing highlights first
@@ -15,7 +13,7 @@ async function highlightAll() {
     }
   });
 
-  const words = (await storage.get<WordList>(STORAGE_KEY)) || [];
+  const words = (await storage.get<WordList>(WORD_LIST_STORAGE_KEY)) || [];
   if (words.length === 0 || !document.body) return;
 
   const walker = document.createTreeWalker(
@@ -25,7 +23,7 @@ async function highlightAll() {
       acceptNode: (node) => {
         const parent = node.parentElement;
         if (!parent) return NodeFilter.FILTER_REJECT;
-        
+
         const tagName = parent.tagName.toUpperCase();
         if (['SCRIPT', 'STYLE', 'NOSCRIPT', 'IFRAME', 'CANVAS', 'TEXTAREA', 'MARK'].includes(tagName)) {
           return NodeFilter.FILTER_REJECT;

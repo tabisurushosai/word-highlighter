@@ -1,8 +1,13 @@
-import { storage } from './storage';
-import { WordList, WordItem, getNextColor } from './core';
+import { WORD_LIST_STORAGE_KEY, storage } from './storage';
+import { getNextColor, type WordItem, type WordList } from './core';
 import { getPremiumStatus, isUserPremium, getRemainingTrialDays, upgradeToPremium, FREE_WORD_LIMIT } from './premium';
 
-const STORAGE_KEY = 'word_list';
+type MessageSubstitutions = string | string[];
+
+interface Feedback {
+  key: string;
+  substitutions?: MessageSubstitutions;
+}
 
 const wordInput = document.getElementById('wordInput') as HTMLInputElement;
 const wordInputLabel = document.getElementById('wordInputLabel') as HTMLLabelElement;
@@ -16,7 +21,7 @@ const upgradeButton = document.getElementById('upgradeButton') as HTMLButtonElem
 
 const numberFormatter = new Intl.NumberFormat(chrome.i18n.getUILanguage());
 
-function getMessage(key: string, substitutions?: string | string[]): string {
+function getMessage(key: string, substitutions?: MessageSubstitutions): string {
   return chrome.i18n.getMessage(key, substitutions);
 }
 
@@ -24,8 +29,16 @@ function formatNumber(value: number): string {
   return numberFormatter.format(value);
 }
 
-function setStatusMessage(key: string, substitutions?: string | string[]) {
+function setStatusMessage(key: string, substitutions?: MessageSubstitutions) {
   statusMessage.textContent = getMessage(key, substitutions);
+}
+
+async function getStoredWords(): Promise<WordList> {
+  return (await storage.get<WordList>(WORD_LIST_STORAGE_KEY)) || [];
+}
+
+async function saveWords(words: WordList): Promise<void> {
+  await storage.set(WORD_LIST_STORAGE_KEY, words);
 }
 
 // Apply internationalization
@@ -95,13 +108,13 @@ async function triggerHighlight() {
   }
 }
 
-async function renderList(feedback?: { key: string; substitutions?: string | string[] }) {
+async function renderList(feedback?: Feedback) {
   wordListContainer.setAttribute('aria-busy', 'true');
   if (!feedback) {
     setStatusMessage('loadingWords');
   }
 
-  const words = (await storage.get<WordList>(STORAGE_KEY)) || [];
+  const words = await getStoredWords();
   const status = await getPremiumStatus();
   const isPremium = isUserPremium(status);
 
@@ -142,9 +155,9 @@ async function renderList(feedback?: { key: string; substitutions?: string | str
       colorInput.title = getMessage('changeWordColor', [word.text]);
       colorInput.setAttribute('aria-label', getMessage('changeWordColor', [word.text]));
       colorInput.onchange = async () => {
-        const currentWords = (await storage.get<WordList>(STORAGE_KEY)) || [];
+        const currentWords = await getStoredWords();
         const updated = currentWords.map(w => w.id === word.id ? { ...w, color: colorInput.value } : w);
-        await storage.set(STORAGE_KEY, updated);
+        await saveWords(updated);
         setStatusMessage('colorUpdated');
         await triggerHighlight();
       };
@@ -170,9 +183,9 @@ async function renderList(feedback?: { key: string; substitutions?: string | str
     deleteBtn.type = 'button';
     deleteBtn.setAttribute('aria-label', getMessage('deleteWord', [word.text]));
     deleteBtn.onclick = async () => {
-      const currentWords = (await storage.get<WordList>(STORAGE_KEY)) || [];
+      const currentWords = await getStoredWords();
       const filtered = currentWords.filter(w => w.id !== word.id);
-      await storage.set(STORAGE_KEY, filtered);
+      await saveWords(filtered);
       await renderList({ key: 'wordDeleted' });
       await triggerHighlight();
     };
@@ -209,7 +222,7 @@ addWordForm.addEventListener('submit', async (event) => {
   const text = wordInput.value.trim();
   if (!text) return;
 
-  const words = (await storage.get<WordList>(STORAGE_KEY)) || [];
+  const words = await getStoredWords();
   const status = await getPremiumStatus();
   if (!isUserPremium(status) && words.length >= FREE_WORD_LIMIT) {
     return;
@@ -221,7 +234,7 @@ addWordForm.addEventListener('submit', async (event) => {
     color: getNextColor(words.length),
   };
 
-  await storage.set(STORAGE_KEY, [...words, newItem]);
+  await saveWords([...words, newItem]);
   wordInput.value = '';
   await renderList({ key: 'wordSaved' });
   await triggerHighlight();
