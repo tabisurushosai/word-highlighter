@@ -11,6 +11,8 @@ interface Feedback {
 
 type StatusTone = 'info' | 'loading' | 'success';
 
+type FocusTarget = 'wordInput' | 'upgradeButton';
+
 const wordInput = document.getElementById('wordInput') as HTMLInputElement;
 const wordInputLabel = document.getElementById('wordInputLabel') as HTMLLabelElement;
 const addWordForm = document.getElementById('addWordForm') as HTMLFormElement;
@@ -39,6 +41,26 @@ function setStatusMessage(key: string, substitutions?: MessageSubstitutions, ton
 
 function getFeedbackTone(key: string): StatusTone {
   return ['wordSaved', 'wordDeleted', 'colorUpdated'].includes(key) ? 'success' : 'info';
+}
+
+function focusPreferredControl(target: FocusTarget) {
+  requestAnimationFrame(() => {
+    if (target === 'upgradeButton' && !upgradeButton.hidden && !upgradeButton.disabled) {
+      upgradeButton.focus();
+      return;
+    }
+
+    if (!wordInput.disabled) {
+      wordInput.focus();
+    }
+  });
+}
+
+function focusDeleteButtonAt(index: number) {
+  requestAnimationFrame(() => {
+    const deleteButtons = wordListContainer.querySelectorAll<HTMLButtonElement>('.delete-button');
+    deleteButtons[index]?.focus();
+  });
 }
 
 function renderLoadingState() {
@@ -98,17 +120,19 @@ async function updatePremiumUI() {
   if (isPremium) {
     if (status.isPremium) {
       premiumStatusSpan.textContent = getMessage('premiumActive');
-      upgradeButton.style.display = 'none';
+      upgradeButton.hidden = true;
     } else {
       const days = getRemainingTrialDays(status);
       premiumStatusSpan.textContent = getMessage('trialPeriod', [formatNumber(days)]);
-      upgradeButton.style.display = 'inline-flex';
+      upgradeButton.hidden = false;
       upgradeButton.textContent = getMessage('premiumUpgrade');
+      upgradeButton.setAttribute('aria-label', getMessage('premiumUpgrade'));
     }
   } else {
     premiumStatusSpan.textContent = getMessage('limitReached', [formatNumber(FREE_WORD_LIMIT)]);
-    upgradeButton.style.display = 'inline-flex';
+    upgradeButton.hidden = false;
     upgradeButton.textContent = getMessage('premiumUpgrade');
+    upgradeButton.setAttribute('aria-label', getMessage('premiumUpgrade'));
   }
 }
 
@@ -166,7 +190,7 @@ async function renderList(feedback?: Feedback) {
     wordListContainer.appendChild(emptyState);
   }
 
-  words.forEach(word => {
+  words.forEach((word, index) => {
     const div = document.createElement('li');
     div.className = 'word-item';
 
@@ -210,6 +234,11 @@ async function renderList(feedback?: Feedback) {
       const filtered = currentWords.filter(w => w.id !== word.id);
       await saveWords(filtered);
       await renderList({ key: 'wordDeleted' });
+      if (filtered.length > 0) {
+        focusDeleteButtonAt(Math.min(index, filtered.length - 1));
+      } else {
+        focusPreferredControl('wordInput');
+      }
       await triggerHighlight();
     };
     div.appendChild(deleteBtn);
@@ -221,10 +250,14 @@ async function renderList(feedback?: Feedback) {
   if (!isPremium && words.length >= FREE_WORD_LIMIT) {
     wordInput.disabled = true;
     addButton.disabled = true;
+    wordInput.setAttribute('aria-disabled', 'true');
+    addButton.setAttribute('aria-disabled', 'true');
     wordInput.placeholder = getMessage('limitReached', [formatNumber(FREE_WORD_LIMIT)]);
   } else {
     wordInput.disabled = false;
     addButton.disabled = false;
+    wordInput.removeAttribute('aria-disabled');
+    addButton.removeAttribute('aria-disabled');
     wordInput.placeholder = getMessage('addPlaceholder');
   }
 
@@ -260,6 +293,7 @@ addWordForm.addEventListener('submit', async (event) => {
   await saveWords([...words, newItem]);
   wordInput.value = '';
   await renderList({ key: 'wordSaved' });
+  focusPreferredControl(wordInput.disabled ? 'upgradeButton' : 'wordInput');
   await triggerHighlight();
 });
 
