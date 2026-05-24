@@ -9,11 +9,14 @@ interface Feedback {
   substitutions?: MessageSubstitutions;
 }
 
+type StatusTone = 'info' | 'loading' | 'success';
+
 const wordInput = document.getElementById('wordInput') as HTMLInputElement;
 const wordInputLabel = document.getElementById('wordInputLabel') as HTMLLabelElement;
 const addWordForm = document.getElementById('addWordForm') as HTMLFormElement;
 const addButton = document.getElementById('addButton') as HTMLButtonElement;
 const onboardingGuide = document.getElementById('onboardingGuide') as HTMLParagraphElement;
+const wordListHeading = document.getElementById('wordListHeading') as HTMLHeadingElement;
 const wordListContainer = document.getElementById('wordList') as HTMLUListElement;
 const statusMessage = document.getElementById('statusMessage') as HTMLDivElement;
 const premiumStatusSpan = document.getElementById('premiumStatus') as HTMLSpanElement;
@@ -29,8 +32,23 @@ function formatNumber(value: number): string {
   return numberFormatter.format(value);
 }
 
-function setStatusMessage(key: string, substitutions?: MessageSubstitutions) {
+function setStatusMessage(key: string, substitutions?: MessageSubstitutions, tone: StatusTone = 'info') {
   statusMessage.textContent = getMessage(key, substitutions);
+  statusMessage.className = `status-message status-message--${tone}`;
+}
+
+function getFeedbackTone(key: string): StatusTone {
+  return ['wordSaved', 'wordDeleted', 'colorUpdated'].includes(key) ? 'success' : 'info';
+}
+
+function renderLoadingState() {
+  wordListContainer.innerHTML = '';
+
+  const loadingState = document.createElement('li');
+  loadingState.className = 'loading-state';
+  loadingState.textContent = getMessage('loadingWords');
+
+  wordListContainer.appendChild(loadingState);
 }
 
 async function getStoredWords(): Promise<WordList> {
@@ -62,8 +80,12 @@ function applyI18n() {
     onboardingGuide.textContent = getMessage('onboardingGuide');
   }
 
+  if (wordListHeading) {
+    wordListHeading.textContent = getMessage('wordListLabel');
+  }
+
   if (wordListContainer) {
-    wordListContainer.setAttribute('aria-label', getMessage('wordListLabel'));
+    wordListContainer.setAttribute('aria-labelledby', 'wordListHeading');
   }
 }
 
@@ -111,7 +133,8 @@ async function triggerHighlight() {
 async function renderList(feedback?: Feedback) {
   wordListContainer.setAttribute('aria-busy', 'true');
   if (!feedback) {
-    setStatusMessage('loadingWords');
+    setStatusMessage('loadingWords', undefined, 'loading');
+    renderLoadingState();
   }
 
   const words = await getStoredWords();
@@ -158,7 +181,7 @@ async function renderList(feedback?: Feedback) {
         const currentWords = await getStoredWords();
         const updated = currentWords.map(w => w.id === word.id ? { ...w, color: colorInput.value } : w);
         await saveWords(updated);
-        setStatusMessage('colorUpdated');
+        setStatusMessage('colorUpdated', undefined, 'success');
         await triggerHighlight();
       };
       div.appendChild(colorInput);
@@ -206,7 +229,7 @@ async function renderList(feedback?: Feedback) {
   }
 
   if (feedback) {
-    setStatusMessage(feedback.key, feedback.substitutions);
+    setStatusMessage(feedback.key, feedback.substitutions, getFeedbackTone(feedback.key));
   } else if (words.length === 0) {
     setStatusMessage('noWords');
   } else {
