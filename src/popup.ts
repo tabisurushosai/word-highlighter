@@ -202,7 +202,7 @@ async function renderList(feedback?: Feedback): Promise<void> {
     const emptyState = document.createElement('li');
     emptyState.className = 'empty-state';
     emptyState.setAttribute('aria-labelledby', 'emptyStateTitle');
-    emptyState.setAttribute('aria-describedby', 'emptyStateDescription emptyStateGuide emptyStateAction');
+    emptyState.setAttribute('aria-describedby', 'emptyStateDescription emptyStateGuide emptyStateExample emptyStateAction');
 
     const title = document.createElement('p');
     title.id = 'emptyStateTitle';
@@ -221,6 +221,12 @@ async function renderList(feedback?: Feedback): Promise<void> {
     guide.className = 'empty-state-guide';
     guide.textContent = getMessage('emptyStateGuide');
     emptyState.appendChild(guide);
+
+    const example = document.createElement('p');
+    example.id = 'emptyStateExample';
+    example.className = 'empty-state-example';
+    example.textContent = getMessage('emptyStateExample');
+    emptyState.appendChild(example);
 
     const action = document.createElement('p');
     action.id = 'emptyStateAction';
