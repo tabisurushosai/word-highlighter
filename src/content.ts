@@ -1,5 +1,5 @@
 import { WORD_LIST_STORAGE_KEY, storage } from './storage';
-import { findMatches, type WordList } from './core';
+import { findMatches, getAccessibleTextColor, type WordList } from './core';
 
 const EXCLUDED_TEXT_PARENT_TAGS = new Set([
   'SCRIPT',
@@ -73,9 +73,10 @@ async function highlightAll(): Promise<void> {
 
       // Create mark element
       const mark = document.createElement('mark');
+      const highlightColor = match.word.color || '#ffeb3b';
       mark.textContent = text.substring(match.start, match.end);
-      mark.style.backgroundColor = match.word.color || '#ffeb3b';
-      mark.style.color = 'black';
+      mark.style.backgroundColor = highlightColor;
+      mark.style.color = getAccessibleTextColor(highlightColor);
       // Add a data attribute to identify our marks if needed later
       mark.setAttribute('data-word-highlighter', 'true');
       fragment.appendChild(mark);
