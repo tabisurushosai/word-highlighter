@@ -27,6 +27,7 @@ const upgradeButton = document.getElementById('upgradeButton') as HTMLButtonElem
 const uiLanguage = chrome.i18n.getUILanguage();
 const numberFormatter = new Intl.NumberFormat(uiLanguage);
 const pluralRules = new Intl.PluralRules(uiLanguage);
+const wordInputBaseDescriptionIds = ['statusMessage'];
 
 function getMessage(key: string, substitutions?: MessageSubstitutions): string {
   return chrome.i18n.getMessage(key, substitutions);
@@ -68,6 +69,14 @@ function focusDeleteButtonAt(index: number) {
     const deleteButtons = wordListContainer.querySelectorAll<HTMLButtonElement>('.delete-button');
     deleteButtons[index]?.focus();
   });
+}
+
+function setOnboardingVisibility(isVisible: boolean) {
+  onboardingGuide.hidden = !isVisible;
+  const descriptionIds = isVisible
+    ? ['onboardingGuide', ...wordInputBaseDescriptionIds]
+    : wordInputBaseDescriptionIds;
+  wordInput.setAttribute('aria-describedby', descriptionIds.join(' '));
 }
 
 function renderLoadingState() {
@@ -173,23 +182,28 @@ async function renderList(feedback?: Feedback) {
   const isPremium = isUserPremium(status);
 
   wordListContainer.innerHTML = '';
-  onboardingGuide.hidden = words.length > 0;
+  setOnboardingVisibility(words.length === 0);
 
   if (words.length === 0) {
     const emptyState = document.createElement('li');
     emptyState.className = 'empty-state';
+    emptyState.setAttribute('aria-labelledby', 'emptyStateTitle');
+    emptyState.setAttribute('aria-describedby', 'emptyStateDescription emptyStateGuide');
 
     const title = document.createElement('p');
+    title.id = 'emptyStateTitle';
     title.className = 'empty-state-title';
     title.textContent = getMessage('emptyStateTitle');
     emptyState.appendChild(title);
 
     const description = document.createElement('p');
+    description.id = 'emptyStateDescription';
     description.className = 'empty-state-description';
     description.textContent = getMessage('emptyStateDescription');
     emptyState.appendChild(description);
 
     const guide = document.createElement('p');
+    guide.id = 'emptyStateGuide';
     guide.className = 'empty-state-guide';
     guide.textContent = getMessage('emptyStateGuide');
     emptyState.appendChild(guide);

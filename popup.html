@@ -48,8 +48,12 @@
   }
 
   .onboarding-guide {
-    margin: 7px 0 0;
-    color: var(--muted);
+    margin: 10px 0 0;
+    padding: 10px 12px;
+    border: 1px solid var(--info-border);
+    border-radius: 12px;
+    color: var(--info-text);
+    background: var(--info-bg);
     font-size: 13px;
     line-height: 1.5;
   }
@@ -310,12 +314,12 @@
 </style></head><body>
   <header class="header">
     <h1 id="appName" class="title">みつけるマーカー</h1>
-    <p id="onboardingGuide" class="onboarding-guide">まずは見つけたい言葉を1つ追加して、開いているページでマーカーを試せます。</p>
+    <p id="onboardingGuide" class="onboarding-guide" role="note" hidden>まずは見つけたい言葉を1つ追加して、開いているページでマーカーを試せます。</p>
   </header>
   <main id="app" aria-labelledby="appName">
     <form id="addWordForm" class="input-row">
       <label id="wordInputLabel" class="visually-hidden" for="wordInput">追加するキーワード</label>
-      <input type="text" id="wordInput" class="word-input" placeholder="キーワードを追加..." aria-describedby="onboardingGuide statusMessage" aria-controls="wordList">
+      <input type="text" id="wordInput" class="word-input" placeholder="キーワードを追加..." aria-describedby="statusMessage" aria-controls="wordList">
       <button id="addButton" class="add-button" type="submit">追加</button>
     </form>
     <div id="statusMessage" class="status-message" role="status" aria-live="polite" aria-atomic="true"></div>
