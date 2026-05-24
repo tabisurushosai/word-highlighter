@@ -4,6 +4,9 @@ export interface StorageAdapter {
   remove: (key: string) => Promise<void>;
 }
 
+export const WORD_LIST_STORAGE_KEY = 'word_list';
+export const PREMIUM_STATUS_STORAGE_KEY = 'premium_status';
+
 interface ChromeStorageArea {
   get: (key: string) => Promise<Record<string, unknown>>;
   set: (items: Record<string, unknown>) => Promise<void>;

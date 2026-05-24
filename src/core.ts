@@ -12,7 +12,7 @@ export interface Match {
   word: WordItem;
 }
 
-const PALETTE = [
+const PALETTE: readonly [string, ...string[]] = [
   '#ffff00', // Yellow
   '#00ff00', // Lime
   '#00ffff', // Cyan
@@ -29,7 +29,7 @@ const PALETTE = [
  * Returns a color from the predefined palette based on the index.
  */
 export function getNextColor(existingCount: number): string {
-  return PALETTE[existingCount % PALETTE.length];
+  return PALETTE[existingCount % PALETTE.length]!;
 }
 
 /**
@@ -48,15 +48,15 @@ export function findMatches(text: string, words: WordList): Match[] {
     // Escape regex special characters to treat the word text as a literal string
     const escapedText = word.text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const regex = new RegExp(escapedText, 'gi');
-    let match;
+    let match: RegExpExecArray | null;
 
     while ((match = regex.exec(text)) !== null) {
       allMatches.push({
         start: match.index,
         end: regex.lastIndex,
-        word: word,
+        word,
       });
-      
+
       // Prevent infinite loops with zero-length matches (though words should have length > 0)
       if (match.index === regex.lastIndex) {
         regex.lastIndex++;
