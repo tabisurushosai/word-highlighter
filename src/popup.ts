@@ -1,4 +1,4 @@
-import { WORD_LIST_STORAGE_KEY, storage } from './storage';
+import { WORD_LIST_STORAGE_KEY, store } from './storage';
 import { configureChromeStorageAdapter } from './chrome-storage';
 import { getNextColor, type WordItem, type WordList } from './core';
 import { getPremiumStatus, isUserPremium, getRemainingTrialDays, upgradeToPremium, FREE_WORD_LIMIT } from './premium';
@@ -163,11 +163,11 @@ function createEmptyState(): HTMLLIElement {
 }
 
 async function getStoredWords(): Promise<WordList> {
-  return (await storage.get<WordList>(WORD_LIST_STORAGE_KEY)) || [];
+  return (await store.get<WordList>(WORD_LIST_STORAGE_KEY)) || [];
 }
 
 async function saveWords(words: WordList): Promise<void> {
-  await storage.set(WORD_LIST_STORAGE_KEY, words);
+  await store.set(WORD_LIST_STORAGE_KEY, words);
 }
 
 // Apply internationalization

@@ -1,4 +1,4 @@
-import { WORD_LIST_STORAGE_KEY, storage } from './storage';
+import { WORD_LIST_STORAGE_KEY, store } from './storage';
 import { configureChromeStorageAdapter } from './chrome-storage';
 import { findMatches, getAccessibleTextColor, type WordList } from './core';
 
@@ -30,7 +30,7 @@ async function highlightAll(): Promise<void> {
     }
   });
 
-  const words = (await storage.get<WordList>(WORD_LIST_STORAGE_KEY)) || [];
+  const words = (await store.get<WordList>(WORD_LIST_STORAGE_KEY)) || [];
   if (words.length === 0 || !document.body) return;
 
   const walker = document.createTreeWalker(
