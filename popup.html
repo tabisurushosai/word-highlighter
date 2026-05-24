@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset="utf-8"><style>
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>みつけるマーカー</title><style>
   :root {
     color-scheme: light;
     --page-bg: #f8fafc;
@@ -19,6 +19,7 @@
     --info-border: #93c5fd;
     --info-text: #1e3a8a;
     --focus: #2563eb;
+    --focus-ring: 0 0 0 4px rgba(37, 99, 235, .22);
     --shadow-card: 0 8px 22px rgba(15, 23, 42, .07);
   }
 
@@ -27,7 +28,7 @@
   }
 
   body {
-    width: 372px;
+    width: min(100vw, 372px);
     margin: 0;
     padding: 20px;
     background: var(--page-bg);
@@ -81,8 +82,8 @@
   .word-input {
     flex: 1;
     min-width: 0;
-    min-height: 44px;
-    padding: 11px 14px;
+    min-height: 48px;
+    padding: 12px 14px;
     border: 1px solid var(--border-strong);
     border-radius: 14px;
     color: var(--text);
@@ -98,20 +99,22 @@
   button:focus-visible,
   .color-input:focus-visible {
     outline: 3px solid var(--focus);
-    outline-offset: 2px;
+    outline-offset: 3px;
+    box-shadow: var(--focus-ring);
   }
 
   button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 44px;
-    min-height: 44px;
+    min-width: 48px;
+    min-height: 48px;
     border: 1px solid transparent;
     border-radius: 14px;
     font: inherit;
     font-weight: 600;
     cursor: pointer;
+    touch-action: manipulation;
   }
 
   button:disabled,
@@ -216,8 +219,13 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    min-height: 54px;
+    min-height: 58px;
     padding: 10px 12px 10px 14px;
+  }
+
+  .word-item:focus-within {
+    border-color: var(--focus);
+    box-shadow: var(--focus-ring), var(--shadow-card);
   }
 
   .word-text {
@@ -229,10 +237,10 @@
   }
 
   .color-input {
-    width: 44px;
-    height: 44px;
-    min-height: 44px;
-    flex: 0 0 44px;
+    width: 48px;
+    height: 48px;
+    min-height: 48px;
+    flex: 0 0 48px;
     padding: 0;
     border: 1px solid var(--border-strong);
     border-radius: 8px;
@@ -249,8 +257,8 @@
   }
 
   .delete-button {
-    width: 44px;
-    min-height: 44px;
+    width: 48px;
+    min-height: 48px;
     padding: 0;
     color: var(--muted-soft);
     background: transparent;
@@ -314,7 +322,7 @@
   }
 
   .upgrade-button {
-    min-height: 44px;
+    min-height: 48px;
     padding: 0 16px;
     color: var(--primary);
     background: #eff6ff;
@@ -327,11 +335,12 @@
     <p id="onboardingGuide" class="onboarding-guide" role="note" hidden>まずは見つけたい言葉を1つ追加して、開いているページでマーカーを試せます。</p>
   </header>
   <main id="app" aria-labelledby="appName">
-    <form id="addWordForm" class="input-row">
+    <form id="addWordForm" class="input-row" aria-describedby="keyboardHelp">
       <label id="wordInputLabel" class="visually-hidden" for="wordInput">追加するキーワード</label>
       <input type="text" id="wordInput" class="word-input" placeholder="キーワードを追加..." aria-describedby="statusMessage" aria-controls="wordList">
       <button id="addButton" class="add-button" type="submit">追加</button>
     </form>
+    <p id="keyboardHelp" class="visually-hidden">Tabキーで操作を移動し、EnterキーまたはSpaceキーでボタンを実行できます。</p>
     <div id="statusMessage" class="status-message" role="status" aria-live="polite" aria-atomic="true"></div>
     <section class="word-list-section" aria-labelledby="wordListHeading">
       <div class="list-header">
