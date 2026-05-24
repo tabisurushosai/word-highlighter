@@ -39,6 +39,12 @@
     letter-spacing: .01em;
   }
 
+  .onboarding-guide {
+    margin: 6px 0 0;
+    color: var(--muted);
+    font-size: 12px;
+  }
+
   .input-row {
     display: flex;
     gap: 8px;
@@ -183,9 +189,26 @@
   }
 
   .empty-state {
-    padding: 18px 14px;
+    padding: 16px 14px;
     color: var(--muted);
-    text-align: center;
+    text-align: left;
+  }
+
+  .empty-state-title {
+    margin: 0 0 6px;
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .empty-state-description,
+  .empty-state-guide {
+    margin: 0;
+  }
+
+  .empty-state-guide {
+    margin-top: 8px;
+    font-weight: 600;
   }
 
   .divider {
@@ -216,11 +239,12 @@
 </style></head><body>
   <header class="header">
     <h1 id="appName" class="title">みつけるマーカー</h1>
+    <p id="onboardingGuide" class="onboarding-guide">まずは見つけたい言葉を1つ追加して、開いているページでマーカーを試せます。</p>
   </header>
   <main id="app" aria-labelledby="appName">
     <form id="addWordForm" class="input-row">
       <label id="wordInputLabel" class="visually-hidden" for="wordInput">追加するキーワード</label>
-      <input type="text" id="wordInput" class="word-input" placeholder="キーワードを追加..." aria-describedby="statusMessage" aria-controls="wordList">
+      <input type="text" id="wordInput" class="word-input" placeholder="キーワードを追加..." aria-describedby="onboardingGuide statusMessage" aria-controls="wordList">
       <button id="addButton" class="add-button" type="submit">追加</button>
     </form>
     <div id="statusMessage" class="status-message" role="status" aria-live="polite"></div>

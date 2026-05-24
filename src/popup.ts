@@ -8,6 +8,7 @@ const wordInput = document.getElementById('wordInput') as HTMLInputElement;
 const wordInputLabel = document.getElementById('wordInputLabel') as HTMLLabelElement;
 const addWordForm = document.getElementById('addWordForm') as HTMLFormElement;
 const addButton = document.getElementById('addButton') as HTMLButtonElement;
+const onboardingGuide = document.getElementById('onboardingGuide') as HTMLParagraphElement;
 const wordListContainer = document.getElementById('wordList') as HTMLUListElement;
 const statusMessage = document.getElementById('statusMessage') as HTMLDivElement;
 const premiumStatusSpan = document.getElementById('premiumStatus') as HTMLSpanElement;
@@ -42,6 +43,10 @@ function applyI18n() {
 
   if (addButton) {
     addButton.textContent = getMessage('addButton');
+  }
+
+  if (onboardingGuide) {
+    onboardingGuide.textContent = getMessage('onboardingGuide');
   }
 
   if (wordListContainer) {
@@ -101,11 +106,27 @@ async function renderList(feedback?: { key: string; substitutions?: string | str
   const isPremium = isUserPremium(status);
 
   wordListContainer.innerHTML = '';
+  onboardingGuide.hidden = words.length > 0;
 
   if (words.length === 0) {
     const emptyState = document.createElement('li');
     emptyState.className = 'empty-state';
-    emptyState.textContent = getMessage('noWords');
+
+    const title = document.createElement('p');
+    title.className = 'empty-state-title';
+    title.textContent = getMessage('emptyStateTitle');
+    emptyState.appendChild(title);
+
+    const description = document.createElement('p');
+    description.className = 'empty-state-description';
+    description.textContent = getMessage('emptyStateDescription');
+    emptyState.appendChild(description);
+
+    const guide = document.createElement('p');
+    guide.className = 'empty-state-guide';
+    guide.textContent = getMessage('emptyStateGuide');
+    emptyState.appendChild(guide);
+
     wordListContainer.appendChild(emptyState);
   }
 
