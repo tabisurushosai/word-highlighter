@@ -4,7 +4,7 @@ export interface WordItem {
   color: string;
 }
 
-export type WordList = WordItem[];
+export type WordList = readonly WordItem[];
 
 export interface Match {
   start: number;
