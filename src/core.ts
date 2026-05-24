@@ -29,20 +29,22 @@ const PALETTE: readonly [string, ...string[]] = [
   '#f0e68c', // Khaki
 ];
 
+function getHexColorChannel(normalizedHexColor: string, start: number): number {
+  const value = Number.parseInt(normalizedHexColor.slice(start, start + 2), 16) / 255;
+  return value <= 0.03928
+    ? value / 12.92
+    : ((value + 0.055) / 1.055) ** 2.4;
+}
+
 function getRelativeLuminance(hexColor: string): number | undefined {
   const normalized = hexColor.trim().replace(/^#/, '');
   if (!/^[\da-f]{6}$/i.test(normalized)) {
     return undefined;
   }
 
-  const channels = [0, 2, 4].map((start) => {
-    const value = Number.parseInt(normalized.slice(start, start + 2), 16) / 255;
-    return value <= 0.03928
-      ? value / 12.92
-      : ((value + 0.055) / 1.055) ** 2.4;
-  });
-
-  const [red, green, blue] = channels as [number, number, number];
+  const red = getHexColorChannel(normalized, 0);
+  const green = getHexColorChannel(normalized, 2);
+  const blue = getHexColorChannel(normalized, 4);
   return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
 }
 
@@ -56,7 +58,8 @@ function getContrastRatio(firstLuminance: number, secondLuminance: number): numb
  * Returns a color from the predefined palette based on the index.
  */
 export function getNextColor(existingCount: number): string {
-  return PALETTE[existingCount % PALETTE.length]!;
+  const paletteIndex = existingCount % PALETTE.length;
+  return PALETTE[paletteIndex] ?? PALETTE[0];
 }
 
 /**

@@ -16,6 +16,12 @@ type StatusTone = 'info' | 'loading' | 'success';
 
 type FocusTarget = 'wordInput' | 'upgradeButton';
 
+interface EmptyStateMessage {
+  id: string;
+  className: string;
+  messageKey: string;
+}
+
 type ElementConstructor<T extends HTMLElement> = {
   new (): T;
 };
@@ -50,6 +56,33 @@ const numberFormatter = new Intl.NumberFormat(supportedLocale);
 const pluralRules = new Intl.PluralRules(supportedLocale);
 const wordInputBaseDescriptionIds = ['statusMessage'];
 const successFeedbackKeys = new Set(['wordSaved', 'wordDeleted', 'colorUpdated']);
+const emptyStateMessages: readonly EmptyStateMessage[] = [
+  {
+    id: 'emptyStateTitle',
+    className: 'empty-state-title',
+    messageKey: 'emptyStateTitle',
+  },
+  {
+    id: 'emptyStateDescription',
+    className: 'empty-state-description',
+    messageKey: 'emptyStateDescription',
+  },
+  {
+    id: 'emptyStateGuide',
+    className: 'empty-state-guide',
+    messageKey: 'emptyStateGuide',
+  },
+  {
+    id: 'emptyStateExample',
+    className: 'empty-state-example',
+    messageKey: 'emptyStateExample',
+  },
+  {
+    id: 'emptyStateAction',
+    className: 'empty-state-action',
+    messageKey: 'emptyStateAction',
+  },
+];
 
 function getMessage(key: string, substitutions?: MessageSubstitutions): string {
   return chrome.i18n.getMessage(key, substitutions);
@@ -109,6 +142,23 @@ function renderLoadingState(): void {
   loadingState.textContent = getMessage('loadingWords');
 
   wordListContainer.appendChild(loadingState);
+}
+
+function createEmptyState(): HTMLLIElement {
+  const emptyState = document.createElement('li');
+  emptyState.className = 'empty-state';
+  emptyState.setAttribute('aria-labelledby', 'emptyStateTitle');
+  emptyState.setAttribute('aria-describedby', 'emptyStateDescription emptyStateGuide emptyStateExample emptyStateAction');
+
+  emptyStateMessages.forEach(({ id, className, messageKey }) => {
+    const message = document.createElement('p');
+    message.id = id;
+    message.className = className;
+    message.textContent = getMessage(messageKey);
+    emptyState.appendChild(message);
+  });
+
+  return emptyState;
 }
 
 async function getStoredWords(): Promise<WordList> {
@@ -199,42 +249,7 @@ async function renderList(feedback?: Feedback): Promise<void> {
   setOnboardingVisibility(words.length === 0);
 
   if (words.length === 0) {
-    const emptyState = document.createElement('li');
-    emptyState.className = 'empty-state';
-    emptyState.setAttribute('aria-labelledby', 'emptyStateTitle');
-    emptyState.setAttribute('aria-describedby', 'emptyStateDescription emptyStateGuide emptyStateExample emptyStateAction');
-
-    const title = document.createElement('p');
-    title.id = 'emptyStateTitle';
-    title.className = 'empty-state-title';
-    title.textContent = getMessage('emptyStateTitle');
-    emptyState.appendChild(title);
-
-    const description = document.createElement('p');
-    description.id = 'emptyStateDescription';
-    description.className = 'empty-state-description';
-    description.textContent = getMessage('emptyStateDescription');
-    emptyState.appendChild(description);
-
-    const guide = document.createElement('p');
-    guide.id = 'emptyStateGuide';
-    guide.className = 'empty-state-guide';
-    guide.textContent = getMessage('emptyStateGuide');
-    emptyState.appendChild(guide);
-
-    const example = document.createElement('p');
-    example.id = 'emptyStateExample';
-    example.className = 'empty-state-example';
-    example.textContent = getMessage('emptyStateExample');
-    emptyState.appendChild(example);
-
-    const action = document.createElement('p');
-    action.id = 'emptyStateAction';
-    action.className = 'empty-state-action';
-    action.textContent = getMessage('emptyStateAction');
-    emptyState.appendChild(action);
-
-    wordListContainer.appendChild(emptyState);
+    wordListContainer.appendChild(createEmptyState());
   }
 
   words.forEach((word, index) => {
