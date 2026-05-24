@@ -45,8 +45,9 @@ const premiumStatusSpan = getRequiredElement('premiumStatus', HTMLSpanElement);
 const upgradeButton = getRequiredElement('upgradeButton', HTMLButtonElement);
 
 const uiLanguage = chrome.i18n.getUILanguage();
-const numberFormatter = new Intl.NumberFormat(uiLanguage);
-const pluralRules = new Intl.PluralRules(uiLanguage);
+const supportedLocale = uiLanguage.toLowerCase().startsWith('en') ? 'en' : 'ja';
+const numberFormatter = new Intl.NumberFormat(supportedLocale);
+const pluralRules = new Intl.PluralRules(supportedLocale);
 const wordInputBaseDescriptionIds = ['statusMessage'];
 const successFeedbackKeys = new Set(['wordSaved', 'wordDeleted', 'colorUpdated']);
 
@@ -120,7 +121,7 @@ async function saveWords(words: WordList): Promise<void> {
 
 // Apply internationalization
 function applyI18n(): void {
-  document.documentElement.lang = uiLanguage;
+  document.documentElement.lang = supportedLocale;
   document.title = getMessage('appName');
   appName.textContent = getMessage('appName');
   wordInputLabel.textContent = getMessage('wordInputLabel');
