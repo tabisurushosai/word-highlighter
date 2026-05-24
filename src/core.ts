@@ -1,3 +1,5 @@
+// Portable pure logic only: keep Chrome, DOM, storage, and UI dependencies out.
+
 export interface WordItem {
   id: string;
   text: string;

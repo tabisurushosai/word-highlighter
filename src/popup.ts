@@ -1,6 +1,9 @@
 import { WORD_LIST_STORAGE_KEY, storage } from './storage';
+import { configureChromeStorageAdapter } from './chrome-storage';
 import { getNextColor, type WordItem, type WordList } from './core';
 import { getPremiumStatus, isUserPremium, getRemainingTrialDays, upgradeToPremium, FREE_WORD_LIMIT } from './premium';
+
+configureChromeStorageAdapter();
 
 type MessageSubstitutions = string | string[];
 

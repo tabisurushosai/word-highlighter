@@ -1,5 +1,8 @@
 import { WORD_LIST_STORAGE_KEY, storage } from './storage';
+import { configureChromeStorageAdapter } from './chrome-storage';
 import { findMatches, getAccessibleTextColor, type WordList } from './core';
+
+configureChromeStorageAdapter();
 
 const EXCLUDED_TEXT_PARENT_TAGS = new Set([
   'SCRIPT',
