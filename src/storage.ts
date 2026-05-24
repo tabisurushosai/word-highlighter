@@ -8,30 +8,36 @@ export type StorageKey = typeof STORAGE_KEYS[keyof typeof STORAGE_KEYS];
 export const WORD_LIST_STORAGE_KEY: StorageKey = STORAGE_KEYS.wordList;
 export const PREMIUM_STATUS_STORAGE_KEY: StorageKey = STORAGE_KEYS.premiumStatus;
 
-export interface StorageAdapter {
-  get: <T>(key: StorageKey) => Promise<T | undefined>;
-  set: <T>(key: StorageKey, value: T) => Promise<void>;
+export interface StoreAdapter {
+  get: <TValue = unknown>(key: StorageKey) => Promise<TValue | undefined>;
+  set: <TValue = unknown>(key: StorageKey, value: TValue) => Promise<void>;
   remove: (key: StorageKey) => Promise<void>;
 }
 
-export type StoreAdapter = StorageAdapter;
+export type StorageAdapter = StoreAdapter;
 
-let configuredStorage: StorageAdapter | undefined;
+let configuredStore: StoreAdapter | undefined;
 
-export function configureStorageAdapter(adapter: StorageAdapter): void {
-  configuredStorage = adapter;
+export function configureStoreAdapter(adapter: StoreAdapter): void {
+  configuredStore = adapter;
 }
 
-function getStorageAdapter(): StorageAdapter {
-  if (!configuredStorage) {
+export const configureStorageAdapter = configureStoreAdapter;
+
+function getStoreAdapter(): StoreAdapter {
+  if (!configuredStore) {
     throw new Error('Storage adapter is not configured for this platform.');
   }
 
-  return configuredStorage;
+  return configuredStore;
 }
 
-export const storage: StorageAdapter = {
-  get: <T>(key: StorageKey): Promise<T | undefined> => getStorageAdapter().get<T>(key),
-  set: <T>(key: StorageKey, value: T): Promise<void> => getStorageAdapter().set(key, value),
-  remove: (key: StorageKey): Promise<void> => getStorageAdapter().remove(key),
+export const store: StoreAdapter = {
+  get: <TValue = unknown>(key: StorageKey): Promise<TValue | undefined> =>
+    getStoreAdapter().get<TValue>(key),
+  set: <TValue = unknown>(key: StorageKey, value: TValue): Promise<void> =>
+    getStoreAdapter().set(key, value),
+  remove: (key: StorageKey): Promise<void> => getStoreAdapter().remove(key),
 };
+
+export const storage = store;

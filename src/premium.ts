@@ -1,4 +1,4 @@
-import { PREMIUM_STATUS_STORAGE_KEY, storage } from './storage';
+import { PREMIUM_STATUS_STORAGE_KEY, store } from './storage';
 
 export const TRIAL_DAYS = 7;
 export const FREE_WORD_LIMIT = 5;
@@ -10,13 +10,13 @@ export interface PremiumStatus {
 }
 
 export async function getPremiumStatus(): Promise<PremiumStatus> {
-  const status = await storage.get<PremiumStatus>(PREMIUM_STATUS_STORAGE_KEY);
+  const status = await store.get<PremiumStatus>(PREMIUM_STATUS_STORAGE_KEY);
   if (!status) {
     const newStatus: PremiumStatus = {
       isPremium: false,
       trialStartTs: Date.now(),
     };
-    await storage.set(PREMIUM_STATUS_STORAGE_KEY, newStatus);
+    await store.set(PREMIUM_STATUS_STORAGE_KEY, newStatus);
     return newStatus;
   }
   return status;

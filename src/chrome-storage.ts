@@ -1,4 +1,4 @@
-import { configureStorageAdapter, type StorageAdapter, type StorageKey } from './storage';
+import { configureStoreAdapter, type StoreAdapter, type StorageKey } from './storage';
 
 type StorageAreaItems = Partial<Record<StorageKey, unknown>>;
 
@@ -10,7 +10,7 @@ export interface ChromeStorageArea {
 
 export type StorageAreaAdapter = ChromeStorageArea;
 
-export function createChromeStorageAdapter(area: ChromeStorageArea): StorageAdapter {
+export function createChromeStorageAdapter(area: ChromeStorageArea): StoreAdapter {
   return {
     get: async <T>(key: StorageKey): Promise<T | undefined> => {
       const result = await area.get(key);
@@ -33,8 +33,8 @@ function getDefaultChromeStorageArea(): ChromeStorageArea {
   return chrome.storage.local;
 }
 
-export function configureChromeStorageAdapter(area = getDefaultChromeStorageArea()): StorageAdapter {
+export function configureChromeStorageAdapter(area = getDefaultChromeStorageArea()): StoreAdapter {
   const adapter = createChromeStorageAdapter(area);
-  configureStorageAdapter(adapter);
+  configureStoreAdapter(adapter);
   return adapter;
 }
