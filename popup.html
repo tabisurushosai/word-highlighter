@@ -96,7 +96,7 @@
   .word-input {
     flex: 1;
     min-width: 0;
-    min-height: 50px;
+    min-height: 52px;
     padding: 12px 14px;
     border: 1px solid var(--border-strong);
     border-radius: 14px;
@@ -121,8 +121,8 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 48px;
-    min-height: 50px;
+    min-width: 52px;
+    min-height: 52px;
     border: 1px solid transparent;
     border-radius: 14px;
     font: inherit;
@@ -285,10 +285,10 @@
   }
 
   .color-input {
-    width: 48px;
-    height: 48px;
-    min-height: 48px;
-    flex: 0 0 48px;
+    width: 52px;
+    height: 52px;
+    min-height: 52px;
+    flex: 0 0 52px;
     padding: 0;
     border: 1px solid var(--border-strong);
     border-radius: 8px;
@@ -305,8 +305,8 @@
   }
 
   .delete-button {
-    width: 48px;
-    min-height: 48px;
+    width: 52px;
+    min-height: 52px;
     padding: 0;
     color: var(--muted-soft);
     background: transparent;
@@ -450,16 +450,17 @@
   <main id="app" aria-labelledby="appName">
     <form id="addWordForm" class="input-row" aria-describedby="keyboardHelp">
       <label id="wordInputLabel" class="visually-hidden" for="wordInput">追加するキーワード</label>
-      <input type="text" id="wordInput" class="word-input" placeholder="キーワードを追加..." aria-describedby="statusMessage" aria-controls="wordList">
+      <input type="text" id="wordInput" class="word-input" placeholder="キーワードを追加..." aria-describedby="keyboardHelp statusMessage" aria-controls="wordList">
       <button id="addButton" class="add-button" type="submit">追加</button>
     </form>
     <p id="keyboardHelp" class="visually-hidden">Tabキーで操作を移動し、EnterキーまたはSpaceキーでボタンを実行できます。</p>
+    <p id="wordListHelp" class="visually-hidden">登録済みキーワードの行では、表示されている色コントロールでマーカー色を変更し、削除ボタンでキーワードを削除できます。</p>
     <div id="statusMessage" class="status-message" role="status" aria-live="polite" aria-atomic="true"></div>
     <section class="word-list-section" aria-labelledby="wordListHeading">
       <div class="list-header">
         <h2 id="wordListHeading" class="section-title">登録キーワード</h2>
       </div>
-      <ul id="wordList" class="word-list" aria-busy="true" aria-live="polite" aria-relevant="additions removals text" aria-labelledby="wordListHeading"></ul>
+      <ul id="wordList" class="word-list" aria-busy="true" aria-live="polite" aria-relevant="additions removals text" aria-labelledby="wordListHeading" aria-describedby="wordListHelp"></ul>
     </section>
   </main>
   <hr class="divider">
