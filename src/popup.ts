@@ -13,16 +13,32 @@ type StatusTone = 'info' | 'loading' | 'success';
 
 type FocusTarget = 'wordInput' | 'upgradeButton';
 
-const wordInput = document.getElementById('wordInput') as HTMLInputElement;
-const wordInputLabel = document.getElementById('wordInputLabel') as HTMLLabelElement;
-const addWordForm = document.getElementById('addWordForm') as HTMLFormElement;
-const addButton = document.getElementById('addButton') as HTMLButtonElement;
-const onboardingGuide = document.getElementById('onboardingGuide') as HTMLParagraphElement;
-const wordListHeading = document.getElementById('wordListHeading') as HTMLHeadingElement;
-const wordListContainer = document.getElementById('wordList') as HTMLUListElement;
-const statusMessage = document.getElementById('statusMessage') as HTMLDivElement;
-const premiumStatusSpan = document.getElementById('premiumStatus') as HTMLSpanElement;
-const upgradeButton = document.getElementById('upgradeButton') as HTMLButtonElement;
+type ElementConstructor<T extends HTMLElement> = {
+  new (): T;
+};
+
+function getRequiredElement<T extends HTMLElement>(
+  id: string,
+  elementType: ElementConstructor<T>,
+): T {
+  const element = document.getElementById(id);
+  if (!(element instanceof elementType)) {
+    throw new Error(`Missing required popup element: ${id}`);
+  }
+  return element;
+}
+
+const appName = getRequiredElement('appName', HTMLHeadingElement);
+const wordInput = getRequiredElement('wordInput', HTMLInputElement);
+const wordInputLabel = getRequiredElement('wordInputLabel', HTMLLabelElement);
+const addWordForm = getRequiredElement('addWordForm', HTMLFormElement);
+const addButton = getRequiredElement('addButton', HTMLButtonElement);
+const onboardingGuide = getRequiredElement('onboardingGuide', HTMLParagraphElement);
+const wordListHeading = getRequiredElement('wordListHeading', HTMLHeadingElement);
+const wordListContainer = getRequiredElement('wordList', HTMLUListElement);
+const statusMessage = getRequiredElement('statusMessage', HTMLDivElement);
+const premiumStatusSpan = getRequiredElement('premiumStatus', HTMLSpanElement);
+const upgradeButton = getRequiredElement('upgradeButton', HTMLButtonElement);
 
 const uiLanguage = chrome.i18n.getUILanguage();
 const numberFormatter = new Intl.NumberFormat(uiLanguage);
@@ -99,32 +115,13 @@ async function saveWords(words: WordList): Promise<void> {
 
 // Apply internationalization
 function applyI18n() {
-  const appName = document.getElementById('appName');
-  if (appName) appName.textContent = getMessage('appName');
-
-  if (wordInputLabel) {
-    wordInputLabel.textContent = getMessage('wordInputLabel');
-  }
-
-  if (wordInput) {
-    wordInput.placeholder = getMessage('addPlaceholder');
-  }
-
-  if (addButton) {
-    addButton.textContent = getMessage('addButton');
-  }
-
-  if (onboardingGuide) {
-    onboardingGuide.textContent = getMessage('onboardingGuide');
-  }
-
-  if (wordListHeading) {
-    wordListHeading.textContent = getMessage('wordListLabel');
-  }
-
-  if (wordListContainer) {
-    wordListContainer.setAttribute('aria-labelledby', 'wordListHeading');
-  }
+  appName.textContent = getMessage('appName');
+  wordInputLabel.textContent = getMessage('wordInputLabel');
+  wordInput.placeholder = getMessage('addPlaceholder');
+  addButton.textContent = getMessage('addButton');
+  onboardingGuide.textContent = getMessage('onboardingGuide');
+  wordListHeading.textContent = getMessage('wordListLabel');
+  wordListContainer.setAttribute('aria-labelledby', 'wordListHeading');
 }
 
 applyI18n();
