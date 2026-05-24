@@ -314,6 +314,7 @@
 
   .empty-state-description,
   .empty-state-guide,
+  .empty-state-example,
   .empty-state-action {
     margin: 0;
     color: var(--muted);
@@ -322,6 +323,15 @@
   .empty-state-guide {
     margin-top: 10px;
     font-weight: 600;
+  }
+
+  .empty-state-example {
+    margin-top: 10px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: var(--surface-soft);
+    color: var(--muted-soft);
+    font-size: 13px;
   }
 
   .empty-state-action {
@@ -373,7 +383,7 @@
 </style></head><body>
   <header class="header">
     <h1 id="appName" class="title">みつけるマーカー</h1>
-    <p id="onboardingGuide" class="onboarding-guide" role="note" hidden>まずは見つけたい言葉を1つ追加して、開いているページでマーカーを試せます。</p>
+    <p id="onboardingGuide" class="onboarding-guide" role="note" hidden>はじめの一歩: 見つけたい言葉を1つ追加すると、このページですぐマーカーを試せます。</p>
   </header>
   <main id="app" aria-labelledby="appName">
     <form id="addWordForm" class="input-row" aria-describedby="keyboardHelp">
