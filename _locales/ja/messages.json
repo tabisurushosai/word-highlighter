@@ -6,6 +6,7 @@
   "wordListLabel": { "message": "登録済みキーワード" },
   "addPlaceholder": { "message": "キーワードを入力…" },
   "addButton": { "message": "追加" },
+  "keyboardHelp": { "message": "Tabキーで操作を移動し、EnterキーまたはSpaceキーでボタンを実行できます。" },
   "onboardingGuide": { "message": "はじめての方へ: 見つけたい言葉を1つ追加すると、今開いているページでマーカーを試せます。" },
   "loadingWords": { "message": "登録済みキーワードを読み込んでいます…" },
   "noWords": { "message": "キーワードはまだ登録されていません。ページ内で見つけたい言葉を追加してください。" },

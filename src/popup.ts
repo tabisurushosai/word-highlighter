@@ -33,6 +33,7 @@ const wordInput = getRequiredElement('wordInput', HTMLInputElement);
 const wordInputLabel = getRequiredElement('wordInputLabel', HTMLLabelElement);
 const addWordForm = getRequiredElement('addWordForm', HTMLFormElement);
 const addButton = getRequiredElement('addButton', HTMLButtonElement);
+const keyboardHelp = getRequiredElement('keyboardHelp', HTMLParagraphElement);
 const onboardingGuide = getRequiredElement('onboardingGuide', HTMLParagraphElement);
 const wordListHeading = getRequiredElement('wordListHeading', HTMLHeadingElement);
 const wordListContainer = getRequiredElement('wordList', HTMLUListElement);
@@ -115,10 +116,13 @@ async function saveWords(words: WordList): Promise<void> {
 
 // Apply internationalization
 function applyI18n() {
+  document.documentElement.lang = uiLanguage;
+  document.title = getMessage('appName');
   appName.textContent = getMessage('appName');
   wordInputLabel.textContent = getMessage('wordInputLabel');
   wordInput.placeholder = getMessage('addPlaceholder');
   addButton.textContent = getMessage('addButton');
+  keyboardHelp.textContent = getMessage('keyboardHelp');
   onboardingGuide.textContent = getMessage('onboardingGuide');
   wordListHeading.textContent = getMessage('wordListLabel');
   wordListContainer.setAttribute('aria-labelledby', 'wordListHeading');
@@ -134,18 +138,21 @@ async function updatePremiumUI() {
     if (status.isPremium) {
       premiumStatusSpan.textContent = getMessage('premiumActive');
       upgradeButton.hidden = true;
+      upgradeButton.removeAttribute('aria-describedby');
     } else {
       const days = getRemainingTrialDays(status);
       premiumStatusSpan.textContent = getCountMessage('trialPeriod', days);
       upgradeButton.hidden = false;
       upgradeButton.textContent = getMessage('premiumUpgrade');
       upgradeButton.setAttribute('aria-label', getMessage('premiumUpgrade'));
+      upgradeButton.setAttribute('aria-describedby', 'premiumStatus');
     }
   } else {
     premiumStatusSpan.textContent = getCountMessage('limitReached', FREE_WORD_LIMIT);
     upgradeButton.hidden = false;
     upgradeButton.textContent = getMessage('premiumUpgrade');
     upgradeButton.setAttribute('aria-label', getMessage('premiumUpgrade'));
+    upgradeButton.setAttribute('aria-describedby', 'premiumStatus');
   }
 }
 
@@ -211,6 +218,8 @@ async function renderList(feedback?: Feedback) {
   words.forEach((word, index) => {
     const div = document.createElement('li');
     div.className = 'word-item';
+    const wordTextId = `wordText-${index}`;
+    div.setAttribute('aria-labelledby', wordTextId);
 
     if (isPremium) {
       const colorInput = document.createElement('input');
@@ -219,6 +228,7 @@ async function renderList(feedback?: Feedback) {
       colorInput.className = 'color-input';
       colorInput.title = getMessage('changeWordColor', [word.text]);
       colorInput.setAttribute('aria-label', getMessage('changeWordColor', [word.text]));
+      colorInput.setAttribute('aria-describedby', wordTextId);
       colorInput.onchange = async () => {
         const currentWords = await getStoredWords();
         const updated = currentWords.map(w => w.id === word.id ? { ...w, color: colorInput.value } : w);
@@ -238,6 +248,7 @@ async function renderList(feedback?: Feedback) {
     }
 
     const textSpan = document.createElement('span');
+    textSpan.id = wordTextId;
     textSpan.className = 'word-text';
     textSpan.textContent = word.text;
     div.appendChild(textSpan);
@@ -247,6 +258,7 @@ async function renderList(feedback?: Feedback) {
     deleteBtn.className = 'delete-button';
     deleteBtn.type = 'button';
     deleteBtn.setAttribute('aria-label', getMessage('deleteWord', [word.text]));
+    deleteBtn.title = getMessage('deleteWord', [word.text]);
     deleteBtn.onclick = async () => {
       const currentWords = await getStoredWords();
       const filtered = currentWords.filter(w => w.id !== word.id);

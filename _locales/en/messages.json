@@ -6,6 +6,7 @@
   "wordListLabel": { "message": "Saved keywords" },
   "addPlaceholder": { "message": "Add keyword..." },
   "addButton": { "message": "Add" },
+  "keyboardHelp": { "message": "Use Tab to move through controls, then press Enter or Space to activate buttons." },
   "onboardingGuide": { "message": "New here? Add one word to try the marker on the page you have open." },
   "loadingWords": { "message": "Loading saved keywords..." },
   "noWords": { "message": "No keywords yet. Add words you want to find on the page." },
