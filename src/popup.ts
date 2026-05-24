@@ -192,7 +192,7 @@ async function renderList(feedback?: Feedback) {
     const emptyState = document.createElement('li');
     emptyState.className = 'empty-state';
     emptyState.setAttribute('aria-labelledby', 'emptyStateTitle');
-    emptyState.setAttribute('aria-describedby', 'emptyStateDescription emptyStateGuide');
+    emptyState.setAttribute('aria-describedby', 'emptyStateDescription emptyStateGuide emptyStateAction');
 
     const title = document.createElement('p');
     title.id = 'emptyStateTitle';
@@ -211,6 +211,12 @@ async function renderList(feedback?: Feedback) {
     guide.className = 'empty-state-guide';
     guide.textContent = getMessage('emptyStateGuide');
     emptyState.appendChild(guide);
+
+    const action = document.createElement('p');
+    action.id = 'emptyStateAction';
+    action.className = 'empty-state-action';
+    action.textContent = getMessage('emptyStateAction');
+    emptyState.appendChild(action);
 
     wordListContainer.appendChild(emptyState);
   }
