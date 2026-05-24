@@ -7,7 +7,7 @@
     --surface-strong: #eef2f7;
     --text: #111827;
     --muted: #475569;
-    --border: #cfd8e3;
+    --border: #64748b;
     --primary: #1d4ed8;
     --primary-hover: #1e40af;
     --success-bg: #ecfdf3;
@@ -99,6 +99,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    min-width: 44px;
     min-height: 44px;
     border: 1px solid transparent;
     border-radius: 12px;
@@ -110,7 +111,18 @@
   button:disabled,
   .word-input:disabled {
     cursor: not-allowed;
-    opacity: .68;
+    opacity: 1;
+  }
+
+  button:disabled {
+    color: #334155;
+    background: #e2e8f0;
+    border-color: var(--border);
+  }
+
+  .word-input:disabled {
+    color: #334155;
+    background: #e2e8f0;
   }
 
   .add-button {
@@ -288,7 +300,6 @@
   }
 
   .upgrade-button {
-    display: none;
     min-height: 44px;
     padding: 0 16px;
     color: var(--primary);
@@ -307,18 +318,18 @@
       <input type="text" id="wordInput" class="word-input" placeholder="キーワードを追加..." aria-describedby="onboardingGuide statusMessage" aria-controls="wordList">
       <button id="addButton" class="add-button" type="submit">追加</button>
     </form>
-    <div id="statusMessage" class="status-message" role="status" aria-live="polite"></div>
+    <div id="statusMessage" class="status-message" role="status" aria-live="polite" aria-atomic="true"></div>
     <section class="word-list-section" aria-labelledby="wordListHeading">
       <div class="list-header">
         <h2 id="wordListHeading" class="section-title">登録キーワード</h2>
       </div>
-      <ul id="wordList" class="word-list" aria-busy="true" aria-live="polite" aria-labelledby="wordListHeading"></ul>
+      <ul id="wordList" class="word-list" aria-busy="true" aria-live="polite" aria-relevant="additions removals text" aria-labelledby="wordListHeading"></ul>
     </section>
   </main>
   <hr class="divider">
   <section id="premiumArea" class="premium-area" aria-live="polite">
     <span id="premiumStatus"></span>
-    <button id="upgradeButton" class="upgrade-button"></button>
+    <button id="upgradeButton" class="upgrade-button" hidden></button>
   </section>
   <script type="module" src="/src/popup.ts"></script>
 </body></html>
