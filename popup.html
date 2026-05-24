@@ -445,20 +445,20 @@
 </style></head><body>
   <header class="header">
     <h1 id="appName" class="title">みつけるマーカー</h1>
-    <p id="onboardingGuide" class="onboarding-guide" role="note" hidden>はじめの一歩: 見つけたい言葉を1つ追加すると、このページですぐマーカーを試せます。</p>
+    <p id="onboardingGuide" class="onboarding-guide" role="note" hidden>まずは、見つけたい言葉をひとつ追加してください。このページですぐにマーカーを試せます。</p>
   </header>
   <main id="app" aria-labelledby="appName">
     <form id="addWordForm" class="input-row" aria-describedby="keyboardHelp">
       <label id="wordInputLabel" class="visually-hidden" for="wordInput">追加するキーワード</label>
-      <input type="text" id="wordInput" class="word-input" placeholder="キーワードを追加..." aria-describedby="keyboardHelp statusMessage" aria-controls="wordList">
+      <input type="text" id="wordInput" class="word-input" placeholder="キーワードを入力…" aria-describedby="keyboardHelp statusMessage" aria-controls="wordList">
       <button id="addButton" class="add-button" type="submit">追加</button>
     </form>
-    <p id="keyboardHelp" class="visually-hidden">Tabキーで操作を移動し、EnterキーまたはSpaceキーでボタンを実行できます。</p>
-    <p id="wordListHelp" class="visually-hidden">登録済みキーワードの行では、表示されている色コントロールでマーカー色を変更し、削除ボタンでキーワードを削除できます。</p>
+    <p id="keyboardHelp" class="visually-hidden">Tab キーで項目を移動し、Enter キーまたはスペースキーでボタンを押せます。</p>
+    <p id="wordListHelp" class="visually-hidden">登録済みキーワードの各行では、色コントロールでマーカー色を変更し、削除ボタンでキーワードを削除できます。</p>
     <div id="statusMessage" class="status-message" role="status" aria-live="polite" aria-atomic="true"></div>
     <section class="word-list-section" aria-labelledby="wordListHeading">
       <div class="list-header">
-        <h2 id="wordListHeading" class="section-title">登録キーワード</h2>
+        <h2 id="wordListHeading" class="section-title">登録済みキーワード</h2>
       </div>
       <ul id="wordList" class="word-list" aria-busy="true" aria-live="polite" aria-relevant="additions removals text" aria-labelledby="wordListHeading" aria-describedby="wordListHelp"></ul>
     </section>
