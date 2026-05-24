@@ -41,10 +41,6 @@ export function createChromeStorageAdapter(area: ChromeStorageArea): StoreAdapte
   };
 }
 
-export function createStorageAdapter(area: ChromeStorageArea): StoreAdapter {
-  return createChromeStorageAdapter(area);
-}
-
 let configuredStorage: StoreAdapter | undefined;
 
 export function configureStorageAdapter(adapter: StoreAdapter): void {
