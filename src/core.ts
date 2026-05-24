@@ -56,11 +56,6 @@ export function findMatches(text: string, words: WordList): Match[] {
         end: regex.lastIndex,
         word,
       });
-
-      // Prevent infinite loops with zero-length matches (though words should have length > 0)
-      if (match.index === regex.lastIndex) {
-        regex.lastIndex++;
-      }
     }
   }
 

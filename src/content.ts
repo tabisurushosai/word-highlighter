@@ -1,7 +1,21 @@
 import { WORD_LIST_STORAGE_KEY, storage } from './storage';
 import { findMatches, type WordList } from './core';
 
-async function highlightAll() {
+const EXCLUDED_TEXT_PARENT_TAGS = new Set([
+  'SCRIPT',
+  'STYLE',
+  'NOSCRIPT',
+  'IFRAME',
+  'CANVAS',
+  'TEXTAREA',
+  'MARK',
+]);
+
+function isTextNode(node: Node): node is Text {
+  return node.nodeType === Node.TEXT_NODE;
+}
+
+async function highlightAll(): Promise<void> {
   // Clear existing highlights first
   const existingMarks = document.querySelectorAll('mark[data-word-highlighter="true"]');
   existingMarks.forEach(mark => {
@@ -25,7 +39,7 @@ async function highlightAll() {
         if (!parent) return NodeFilter.FILTER_REJECT;
 
         const tagName = parent.tagName.toUpperCase();
-        if (['SCRIPT', 'STYLE', 'NOSCRIPT', 'IFRAME', 'CANVAS', 'TEXTAREA', 'MARK'].includes(tagName)) {
+        if (EXCLUDED_TEXT_PARENT_TAGS.has(tagName)) {
           return NodeFilter.FILTER_REJECT;
         }
         return NodeFilter.FILTER_ACCEPT;
@@ -36,7 +50,9 @@ async function highlightAll() {
   const textNodes: Text[] = [];
   let currentNode: Node | null;
   while ((currentNode = walker.nextNode())) {
-    textNodes.push(currentNode as Text);
+    if (isTextNode(currentNode)) {
+      textNodes.push(currentNode);
+    }
   }
 
   for (const node of textNodes) {
@@ -77,4 +93,4 @@ async function highlightAll() {
 }
 
 // Execute highlighting
-highlightAll();
+void highlightAll();

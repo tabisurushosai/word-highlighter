@@ -45,6 +45,7 @@ const uiLanguage = chrome.i18n.getUILanguage();
 const numberFormatter = new Intl.NumberFormat(uiLanguage);
 const pluralRules = new Intl.PluralRules(uiLanguage);
 const wordInputBaseDescriptionIds = ['statusMessage'];
+const successFeedbackKeys = new Set(['wordSaved', 'wordDeleted', 'colorUpdated']);
 
 function getMessage(key: string, substitutions?: MessageSubstitutions): string {
   return chrome.i18n.getMessage(key, substitutions);
@@ -59,16 +60,16 @@ function getCountMessage(baseKey: string, value: number): string {
   return getMessage(`${baseKey}${suffix}`, [formatNumber(value)]);
 }
 
-function setStatusMessage(key: string, substitutions?: MessageSubstitutions, tone: StatusTone = 'info') {
+function setStatusMessage(key: string, substitutions?: MessageSubstitutions, tone: StatusTone = 'info'): void {
   statusMessage.textContent = getMessage(key, substitutions);
   statusMessage.className = `status-message status-message--${tone}`;
 }
 
 function getFeedbackTone(key: string): StatusTone {
-  return ['wordSaved', 'wordDeleted', 'colorUpdated'].includes(key) ? 'success' : 'info';
+  return successFeedbackKeys.has(key) ? 'success' : 'info';
 }
 
-function focusPreferredControl(target: FocusTarget) {
+function focusPreferredControl(target: FocusTarget): void {
   requestAnimationFrame(() => {
     if (target === 'upgradeButton' && !upgradeButton.hidden && !upgradeButton.disabled) {
       upgradeButton.focus();
@@ -81,14 +82,14 @@ function focusPreferredControl(target: FocusTarget) {
   });
 }
 
-function focusDeleteButtonAt(index: number) {
+function focusDeleteButtonAt(index: number): void {
   requestAnimationFrame(() => {
     const deleteButtons = wordListContainer.querySelectorAll<HTMLButtonElement>('.delete-button');
     deleteButtons[index]?.focus();
   });
 }
 
-function setOnboardingVisibility(isVisible: boolean) {
+function setOnboardingVisibility(isVisible: boolean): void {
   onboardingGuide.hidden = !isVisible;
   const descriptionIds = isVisible
     ? ['onboardingGuide', ...wordInputBaseDescriptionIds]
@@ -96,7 +97,7 @@ function setOnboardingVisibility(isVisible: boolean) {
   wordInput.setAttribute('aria-describedby', descriptionIds.join(' '));
 }
 
-function renderLoadingState() {
+function renderLoadingState(): void {
   wordListContainer.innerHTML = '';
 
   const loadingState = document.createElement('li');
@@ -115,7 +116,7 @@ async function saveWords(words: WordList): Promise<void> {
 }
 
 // Apply internationalization
-function applyI18n() {
+function applyI18n(): void {
   document.documentElement.lang = uiLanguage;
   document.title = getMessage('appName');
   appName.textContent = getMessage('appName');
@@ -130,29 +131,34 @@ function applyI18n() {
 
 applyI18n();
 
-async function updatePremiumUI() {
+function showUpgradeButton(): void {
+  upgradeButton.hidden = false;
+  upgradeButton.textContent = getMessage('premiumUpgrade');
+  upgradeButton.setAttribute('aria-label', getMessage('premiumUpgrade'));
+  upgradeButton.setAttribute('aria-describedby', 'premiumStatus');
+}
+
+function hideUpgradeButton(): void {
+  upgradeButton.hidden = true;
+  upgradeButton.removeAttribute('aria-describedby');
+}
+
+async function updatePremiumUI(): Promise<void> {
   const status = await getPremiumStatus();
   const isPremium = isUserPremium(status);
 
   if (isPremium) {
     if (status.isPremium) {
       premiumStatusSpan.textContent = getMessage('premiumActive');
-      upgradeButton.hidden = true;
-      upgradeButton.removeAttribute('aria-describedby');
+      hideUpgradeButton();
     } else {
       const days = getRemainingTrialDays(status);
       premiumStatusSpan.textContent = getCountMessage('trialPeriod', days);
-      upgradeButton.hidden = false;
-      upgradeButton.textContent = getMessage('premiumUpgrade');
-      upgradeButton.setAttribute('aria-label', getMessage('premiumUpgrade'));
-      upgradeButton.setAttribute('aria-describedby', 'premiumStatus');
+      showUpgradeButton();
     }
   } else {
     premiumStatusSpan.textContent = getCountMessage('limitReached', FREE_WORD_LIMIT);
-    upgradeButton.hidden = false;
-    upgradeButton.textContent = getMessage('premiumUpgrade');
-    upgradeButton.setAttribute('aria-label', getMessage('premiumUpgrade'));
-    upgradeButton.setAttribute('aria-describedby', 'premiumStatus');
+    showUpgradeButton();
   }
 }
 
@@ -160,7 +166,7 @@ upgradeButton.addEventListener('click', async () => {
   await upgradeToPremium();
 });
 
-async function triggerHighlight() {
+async function triggerHighlight(): Promise<void> {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   if (!tab?.id || !tab.url?.startsWith('http')) return;
 
@@ -174,7 +180,7 @@ async function triggerHighlight() {
   }
 }
 
-async function renderList(feedback?: Feedback) {
+async function renderList(feedback?: Feedback): Promise<void> {
   wordListContainer.setAttribute('aria-busy', 'true');
   if (!feedback) {
     setStatusMessage('loadingWords', undefined, 'loading');
@@ -335,4 +341,4 @@ addWordForm.addEventListener('submit', async (event) => {
 });
 
 // Initial render
-renderList();
+void renderList();
