@@ -24,7 +24,9 @@ const statusMessage = document.getElementById('statusMessage') as HTMLDivElement
 const premiumStatusSpan = document.getElementById('premiumStatus') as HTMLSpanElement;
 const upgradeButton = document.getElementById('upgradeButton') as HTMLButtonElement;
 
-const numberFormatter = new Intl.NumberFormat(chrome.i18n.getUILanguage());
+const uiLanguage = chrome.i18n.getUILanguage();
+const numberFormatter = new Intl.NumberFormat(uiLanguage);
+const pluralRules = new Intl.PluralRules(uiLanguage);
 
 function getMessage(key: string, substitutions?: MessageSubstitutions): string {
   return chrome.i18n.getMessage(key, substitutions);
@@ -32,6 +34,11 @@ function getMessage(key: string, substitutions?: MessageSubstitutions): string {
 
 function formatNumber(value: number): string {
   return numberFormatter.format(value);
+}
+
+function getCountMessage(baseKey: string, value: number): string {
+  const suffix = pluralRules.select(value) === 'one' ? 'One' : 'Other';
+  return getMessage(`${baseKey}${suffix}`, [formatNumber(value)]);
 }
 
 function setStatusMessage(key: string, substitutions?: MessageSubstitutions, tone: StatusTone = 'info') {
@@ -123,13 +130,13 @@ async function updatePremiumUI() {
       upgradeButton.hidden = true;
     } else {
       const days = getRemainingTrialDays(status);
-      premiumStatusSpan.textContent = getMessage('trialPeriod', [formatNumber(days)]);
+      premiumStatusSpan.textContent = getCountMessage('trialPeriod', days);
       upgradeButton.hidden = false;
       upgradeButton.textContent = getMessage('premiumUpgrade');
       upgradeButton.setAttribute('aria-label', getMessage('premiumUpgrade'));
     }
   } else {
-    premiumStatusSpan.textContent = getMessage('limitReached', [formatNumber(FREE_WORD_LIMIT)]);
+    premiumStatusSpan.textContent = getCountMessage('limitReached', FREE_WORD_LIMIT);
     upgradeButton.hidden = false;
     upgradeButton.textContent = getMessage('premiumUpgrade');
     upgradeButton.setAttribute('aria-label', getMessage('premiumUpgrade'));
@@ -252,7 +259,7 @@ async function renderList(feedback?: Feedback) {
     addButton.disabled = true;
     wordInput.setAttribute('aria-disabled', 'true');
     addButton.setAttribute('aria-disabled', 'true');
-    wordInput.placeholder = getMessage('limitReached', [formatNumber(FREE_WORD_LIMIT)]);
+    wordInput.placeholder = getCountMessage('limitReached', FREE_WORD_LIMIT);
   } else {
     wordInput.disabled = false;
     addButton.disabled = false;
@@ -266,7 +273,8 @@ async function renderList(feedback?: Feedback) {
   } else if (words.length === 0) {
     setStatusMessage('noWords');
   } else {
-    setStatusMessage('wordCount', [formatNumber(words.length)]);
+    statusMessage.textContent = getCountMessage('wordCount', words.length);
+    statusMessage.className = 'status-message status-message--info';
   }
   wordListContainer.setAttribute('aria-busy', 'false');
 
