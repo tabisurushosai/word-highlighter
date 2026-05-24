@@ -43,6 +43,7 @@ const wordInputLabel = getRequiredElement('wordInputLabel', HTMLLabelElement);
 const addWordForm = getRequiredElement('addWordForm', HTMLFormElement);
 const addButton = getRequiredElement('addButton', HTMLButtonElement);
 const keyboardHelp = getRequiredElement('keyboardHelp', HTMLParagraphElement);
+const wordListHelp = getRequiredElement('wordListHelp', HTMLParagraphElement);
 const onboardingGuide = getRequiredElement('onboardingGuide', HTMLParagraphElement);
 const wordListHeading = getRequiredElement('wordListHeading', HTMLHeadingElement);
 const wordListContainer = getRequiredElement('wordList', HTMLUListElement);
@@ -54,7 +55,7 @@ const uiLanguage = chrome.i18n.getUILanguage();
 const supportedLocale = uiLanguage.toLowerCase().startsWith('en') ? 'en' : 'ja';
 const numberFormatter = new Intl.NumberFormat(supportedLocale);
 const pluralRules = new Intl.PluralRules(supportedLocale);
-const wordInputBaseDescriptionIds = ['statusMessage'];
+const wordInputBaseDescriptionIds = ['keyboardHelp', 'statusMessage'];
 const successFeedbackKeys = new Set(['wordSaved', 'wordDeleted', 'colorUpdated']);
 const emptyStateMessages: readonly EmptyStateMessage[] = [
   {
@@ -178,6 +179,7 @@ function applyI18n(): void {
   wordInput.placeholder = getMessage('addPlaceholder');
   addButton.textContent = getMessage('addButton');
   keyboardHelp.textContent = getMessage('keyboardHelp');
+  wordListHelp.textContent = getMessage('wordListHelp');
   onboardingGuide.textContent = getMessage('onboardingGuide');
   wordListHeading.textContent = getMessage('wordListLabel');
   wordListContainer.setAttribute('aria-labelledby', 'wordListHeading');
@@ -256,6 +258,7 @@ async function renderList(feedback?: Feedback): Promise<void> {
     const div = document.createElement('li');
     div.className = 'word-item';
     const wordTextId = `wordText-${index}`;
+    const wordActionDescriptionIds = `${wordTextId} wordListHelp`;
     div.setAttribute('aria-labelledby', wordTextId);
 
     if (isPremium) {
@@ -265,7 +268,7 @@ async function renderList(feedback?: Feedback): Promise<void> {
       colorInput.className = 'color-input';
       colorInput.title = getMessage('changeWordColor', [word.text]);
       colorInput.setAttribute('aria-label', getMessage('changeWordColor', [word.text]));
-      colorInput.setAttribute('aria-describedby', wordTextId);
+      colorInput.setAttribute('aria-describedby', wordActionDescriptionIds);
       colorInput.onchange = async () => {
         const currentWords = await getStoredWords();
         const updated = currentWords.map(w => w.id === word.id ? { ...w, color: colorInput.value } : w);
@@ -278,9 +281,9 @@ async function renderList(feedback?: Feedback): Promise<void> {
       const colorBadge = document.createElement('div');
       colorBadge.className = 'color-badge';
       colorBadge.style.backgroundColor = word.color;
-      colorBadge.title = getMessage('colorSample');
+      colorBadge.title = getMessage('colorSampleForWord', [word.text]);
       colorBadge.setAttribute('role', 'img');
-      colorBadge.setAttribute('aria-label', getMessage('colorSample'));
+      colorBadge.setAttribute('aria-label', getMessage('colorSampleForWord', [word.text]));
       div.appendChild(colorBadge);
     }
 
@@ -291,11 +294,15 @@ async function renderList(feedback?: Feedback): Promise<void> {
     div.appendChild(textSpan);
 
     const deleteBtn = document.createElement('button');
-    deleteBtn.textContent = '×';
     deleteBtn.className = 'delete-button';
     deleteBtn.type = 'button';
     deleteBtn.setAttribute('aria-label', getMessage('deleteWord', [word.text]));
+    deleteBtn.setAttribute('aria-describedby', wordActionDescriptionIds);
     deleteBtn.title = getMessage('deleteWord', [word.text]);
+    const deleteIcon = document.createElement('span');
+    deleteIcon.setAttribute('aria-hidden', 'true');
+    deleteIcon.textContent = '×';
+    deleteBtn.appendChild(deleteIcon);
     deleteBtn.onclick = async () => {
       const currentWords = await getStoredWords();
       const filtered = currentWords.filter(w => w.id !== word.id);
