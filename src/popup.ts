@@ -129,6 +129,7 @@ function focusDeleteButtonAt(index: number): void {
 
 function setOnboardingVisibility(isVisible: boolean): void {
   onboardingGuide.hidden = !isVisible;
+  addWordForm.classList.toggle('input-row--guided', isVisible);
   const descriptionIds = isVisible
     ? ['onboardingGuide', ...wordInputBaseDescriptionIds]
     : wordInputBaseDescriptionIds;
