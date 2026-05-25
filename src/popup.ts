@@ -16,6 +16,10 @@ type StatusTone = 'info' | 'loading' | 'success';
 
 type FocusTarget = 'wordInput' | 'upgradeButton';
 
+type WordActionMessageKey = 'changeWordColor' | 'colorSampleForWord' | 'deleteWord';
+
+type WordEntryControl = HTMLInputElement | HTMLButtonElement;
+
 interface EmptyStateMessage {
   id: string;
   className: string;
@@ -93,18 +97,42 @@ function formatNumber(value: number): string {
   return numberFormatter.format(value);
 }
 
+function getWordActionMessage(key: WordActionMessageKey, word: WordItem): string {
+  return getMessage(key, [word.text]);
+}
+
 function getCountMessage(baseKey: string, value: number): string {
   const suffix = pluralRules.select(value) === 'one' ? 'One' : 'Other';
   return getMessage(`${baseKey}${suffix}`, [formatNumber(value)]);
 }
 
-function setStatusMessage(key: string, substitutions?: MessageSubstitutions, tone: StatusTone = 'info'): void {
-  statusMessage.textContent = getMessage(key, substitutions);
+function setStatusText(message: string, tone: StatusTone = 'info'): void {
+  statusMessage.textContent = message;
   statusMessage.className = `status-message status-message--${tone}`;
+}
+
+function setStatusMessage(key: string, substitutions?: MessageSubstitutions, tone: StatusTone = 'info'): void {
+  setStatusText(getMessage(key, substitutions), tone);
 }
 
 function getFeedbackTone(key: string): StatusTone {
   return successFeedbackKeys.has(key) ? 'success' : 'info';
+}
+
+function setAriaDisabled(element: WordEntryControl, isDisabled: boolean): void {
+  if (isDisabled) {
+    element.setAttribute('aria-disabled', 'true');
+    return;
+  }
+
+  element.removeAttribute('aria-disabled');
+}
+
+function setWordEntryControlsDisabled(isDisabled: boolean): void {
+  wordInput.disabled = isDisabled;
+  addButton.disabled = isDisabled;
+  setAriaDisabled(wordInput, isDisabled);
+  setAriaDisabled(addButton, isDisabled);
 }
 
 function focusPreferredControl(target: FocusTarget): void {
@@ -267,8 +295,9 @@ async function renderList(feedback?: Feedback): Promise<void> {
       colorInput.type = 'color';
       colorInput.value = word.color;
       colorInput.className = 'color-input';
-      colorInput.title = getMessage('changeWordColor', [word.text]);
-      colorInput.setAttribute('aria-label', getMessage('changeWordColor', [word.text]));
+      const changeColorMessage = getWordActionMessage('changeWordColor', word);
+      colorInput.title = changeColorMessage;
+      colorInput.setAttribute('aria-label', changeColorMessage);
       colorInput.setAttribute('aria-describedby', wordActionDescriptionIds);
       colorInput.onchange = async () => {
         const currentWords = await getStoredWords();
@@ -282,9 +311,10 @@ async function renderList(feedback?: Feedback): Promise<void> {
       const colorBadge = document.createElement('div');
       colorBadge.className = 'color-badge';
       colorBadge.style.backgroundColor = word.color;
-      colorBadge.title = getMessage('colorSampleForWord', [word.text]);
+      const colorSampleMessage = getWordActionMessage('colorSampleForWord', word);
+      colorBadge.title = colorSampleMessage;
       colorBadge.setAttribute('role', 'img');
-      colorBadge.setAttribute('aria-label', getMessage('colorSampleForWord', [word.text]));
+      colorBadge.setAttribute('aria-label', colorSampleMessage);
       div.appendChild(colorBadge);
     }
 
@@ -297,9 +327,10 @@ async function renderList(feedback?: Feedback): Promise<void> {
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'delete-button';
     deleteBtn.type = 'button';
-    deleteBtn.setAttribute('aria-label', getMessage('deleteWord', [word.text]));
+    const deleteWordMessage = getWordActionMessage('deleteWord', word);
+    deleteBtn.setAttribute('aria-label', deleteWordMessage);
     deleteBtn.setAttribute('aria-describedby', wordActionDescriptionIds);
-    deleteBtn.title = getMessage('deleteWord', [word.text]);
+    deleteBtn.title = deleteWordMessage;
     const deleteIcon = document.createElement('span');
     deleteIcon.setAttribute('aria-hidden', 'true');
     deleteIcon.textContent = '×';
@@ -323,16 +354,10 @@ async function renderList(feedback?: Feedback): Promise<void> {
 
   // Check if we can add more words
   if (!isPremium && words.length >= FREE_WORD_LIMIT) {
-    wordInput.disabled = true;
-    addButton.disabled = true;
-    wordInput.setAttribute('aria-disabled', 'true');
-    addButton.setAttribute('aria-disabled', 'true');
+    setWordEntryControlsDisabled(true);
     wordInput.placeholder = getCountMessage('limitReached', FREE_WORD_LIMIT);
   } else {
-    wordInput.disabled = false;
-    addButton.disabled = false;
-    wordInput.removeAttribute('aria-disabled');
-    addButton.removeAttribute('aria-disabled');
+    setWordEntryControlsDisabled(false);
     wordInput.placeholder = getMessage('addPlaceholder');
   }
 
@@ -341,8 +366,7 @@ async function renderList(feedback?: Feedback): Promise<void> {
   } else if (words.length === 0) {
     setStatusMessage('noWords');
   } else {
-    statusMessage.textContent = getCountMessage('wordCount', words.length);
-    statusMessage.className = 'status-message status-message--info';
+    setStatusText(getCountMessage('wordCount', words.length));
   }
   wordListContainer.setAttribute('aria-busy', 'false');
 
