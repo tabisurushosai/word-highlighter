@@ -1,7 +1,7 @@
 <!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>みつけるマーカー</title><style>
   :root {
     color-scheme: light;
-    --page-bg: #f1f5f9;
+    --page-bg: #eef2f7;
     --bg: #ffffff;
     --surface-soft: #f8fafc;
     --surface-strong: #e2e8f0;
@@ -22,8 +22,8 @@
     --info-text: #1e3a8a;
     --focus: #2563eb;
     --focus-ring: 0 0 0 4px rgba(37, 99, 235, .22);
-    --shadow-panel: 0 14px 34px rgba(15, 23, 42, .10);
-    --shadow-card: 0 4px 14px rgba(15, 23, 42, .06);
+    --shadow-panel: 0 16px 36px rgba(15, 23, 42, .11);
+    --shadow-card: 0 5px 16px rgba(15, 23, 42, .07);
   }
 
   * {
@@ -31,10 +31,10 @@
   }
 
   body {
-    width: min(100vw, 400px);
+    width: min(100vw, 420px);
     margin: 0;
-    padding: 18px;
-    background: var(--page-bg);
+    padding: 16px;
+    background: linear-gradient(180deg, #f8fafc 0%, var(--page-bg) 100%);
     color: var(--text);
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     font-size: 14px;
@@ -42,21 +42,24 @@
   }
 
   .header {
-    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 14px;
     padding: 2px 4px 0;
   }
 
   .title {
     margin: 0;
     color: var(--text);
-    font-size: 22px;
+    font-size: 21px;
     font-weight: 700;
-    letter-spacing: -.01em;
+    letter-spacing: -.02em;
     line-height: 1.2;
   }
 
   .onboarding-guide {
-    margin: 12px 0 0;
+    margin: 0;
     padding: 12px 14px;
     border: 1px solid var(--info-border);
     border-left-width: 4px;
@@ -68,9 +71,9 @@
   }
 
   main {
-    padding: 18px;
+    padding: 16px;
     border: 1px solid var(--border);
-    border-radius: 20px;
+    border-radius: 22px;
     background: var(--bg);
     box-shadow: var(--shadow-panel);
   }
@@ -78,7 +81,7 @@
   .input-row {
     display: flex;
     gap: 10px;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
   }
 
   .input-row--guided {
@@ -115,11 +118,16 @@
     border-radius: 14px;
     color: var(--text);
     background: var(--bg);
+    box-shadow: inset 0 1px 2px rgba(15, 23, 42, .05);
     font: inherit;
   }
 
   .word-input::placeholder {
     color: var(--muted-soft);
+  }
+
+  .word-input:hover:not(:disabled) {
+    border-color: var(--focus);
   }
 
   .word-input:focus-visible,
@@ -165,18 +173,23 @@
     padding: 0 20px;
     color: #fff;
     background: var(--primary);
+    box-shadow: 0 6px 14px rgba(29, 78, 216, .18);
   }
 
   .add-button:hover:not(:disabled) {
     background: var(--primary-hover);
   }
 
+  .add-button:disabled {
+    box-shadow: none;
+  }
+
   .status-message {
     display: flex;
     align-items: flex-start;
-    gap: 9px;
-    min-height: 0;
-    margin: 0 0 18px;
+    gap: 10px;
+    min-height: 44px;
+    margin: 0 0 16px;
     padding: 11px 13px;
     border: 1px solid var(--border);
     border-left-width: 4px;
@@ -189,6 +202,7 @@
 
   .status-message:empty {
     display: block;
+    min-height: 0;
     margin: 0;
     padding: 0;
     border: 0;
@@ -203,6 +217,17 @@
 
   .status-message--loading {
     font-weight: 600;
+  }
+
+  .status-message--info::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    margin-top: .55em;
+    border-radius: 50%;
+    background: currentColor;
+    flex: 0 0 8px;
+    opacity: .75;
   }
 
   .status-message--loading::before {
@@ -244,8 +269,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 12px;
-    padding: 0 2px;
+    margin-bottom: 10px;
+    padding: 0 2px 8px;
+    border-bottom: 1px solid var(--surface-strong);
   }
 
   .section-title {
@@ -260,7 +286,7 @@
   .word-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
     padding: 0;
     margin: 0;
     list-style: none;
@@ -281,6 +307,7 @@
     gap: 12px;
     min-height: 60px;
     padding: 11px 12px 11px 14px;
+    background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
   }
 
   .word-item:focus-within {
@@ -292,7 +319,7 @@
     flex: 1;
     min-width: 0;
     overflow-wrap: anywhere;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
     line-height: 1.4;
   }
@@ -306,6 +333,7 @@
     border: 1px solid var(--border-strong);
     border-radius: 8px;
     background: #fff;
+    box-shadow: inset 0 0 0 4px #fff;
     cursor: pointer;
   }
 
@@ -315,6 +343,7 @@
     flex: 0 0 22px;
     border: 1px solid rgba(15, 23, 42, .32);
     border-radius: 6px;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .45);
   }
 
   .delete-button {
@@ -324,6 +353,7 @@
     color: var(--muted-soft);
     background: transparent;
     border-color: transparent;
+    border-radius: 12px;
     font-size: 20px;
     line-height: 1;
   }
@@ -335,7 +365,7 @@
 
   .empty-state,
   .loading-state {
-    padding: 22px 18px;
+    padding: 20px 18px;
     color: var(--muted);
     text-align: left;
   }
@@ -344,12 +374,13 @@
     border-style: dashed;
     border-color: var(--info-border);
     background: linear-gradient(180deg, var(--bg), var(--surface-soft));
+    box-shadow: none;
   }
 
   .empty-state-title {
     margin: 0 0 8px;
     color: var(--text);
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 700;
   }
 
@@ -376,6 +407,7 @@
   }
 
   .empty-state-action {
+    display: inline-block;
     margin-top: 12px;
     padding: 10px 12px;
     border: 1px solid var(--info-border);
@@ -403,6 +435,24 @@
     background: currentColor;
     flex: 0 0 10px;
     opacity: .75;
+  }
+
+  @media (max-width: 360px) {
+    body {
+      padding: 14px;
+    }
+
+    main {
+      padding: 14px;
+    }
+
+    .input-row {
+      gap: 8px;
+    }
+
+    .add-button {
+      padding: 0 14px;
+    }
   }
 
   .divider {
