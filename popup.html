@@ -81,6 +81,19 @@
     margin-bottom: 14px;
   }
 
+  .input-row--guided {
+    margin: 0 -4px 14px;
+    padding: 4px;
+    border: 1px solid var(--info-border);
+    border-radius: 18px;
+    background: var(--info-bg);
+    box-shadow: 0 0 0 3px rgba(147, 197, 253, .16);
+  }
+
+  .input-row--guided .word-input {
+    border-color: var(--primary);
+  }
+
   .visually-hidden {
     position: absolute;
     width: 1px;
@@ -445,7 +458,7 @@
 </style></head><body>
   <header class="header">
     <h1 id="appName" class="title">みつけるマーカー</h1>
-    <p id="onboardingGuide" class="onboarding-guide" role="note" hidden>まずは、見つけたい言葉をひとつ追加してください。このページですぐにマーカーを試せます。</p>
+    <p id="onboardingGuide" class="onboarding-guide" role="note" hidden>まず1語だけ追加すると、開いているページの一致箇所にマーカーがつきます。</p>
   </header>
   <main id="app" aria-labelledby="appName">
     <form id="addWordForm" class="input-row" aria-describedby="keyboardHelp">
